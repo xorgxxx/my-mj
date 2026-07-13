@@ -8,9 +8,8 @@
 </head>
 <body>
 
+  <!-- شاشة السؤال -->
   <section id="screen-question" class="screen active">
-    <div class="tropical-bg-overlay"></div>
-    
     <div class="pine-decor pine-decor--left">🍍</div>
     <div class="pine-decor pine-decor--right">🍍</div>
 
@@ -27,29 +26,20 @@
 
     <p class="hint">كلما زادت سرعة السحب، دلّ ذلك على أنك تحب الأناناس أكثر.</p>
 
-    <p class="pineapple-gratitude-text" id="pineappleGratitudeText">
-      هذا أكثر مما يستحق الأناناس.<br>شکراً على كل قطرة حب، وعلى كل محاولة لأجله.
-    </p>
-
-    <div class="cinematic-ending-scene" id="cinematicEndingScene">
-      <div class="volumetric-smoke"></div>
-      <div class="shadow-distortion"></div>
-    </div>
-
     <div class="btn-row hidden" id="btnRow">
       <button id="sureBtn" class="confirm-btn">متأكد</button>
       <button id="retryBtnEarly" class="retry-btn retry-btn--ghost">إعادة المحاولة</button>
     </div>
   </section>
 
+  <!-- شاشة الانتقال -->
   <section id="screen-transition" class="screen transition-screen">
     <div class="burst"></div>
     <div class="burst burst--2"></div>
   </section>
 
+  <!-- مشهد نمو الوردة -->
   <section id="screen-scene" class="screen scene">
-    <div class="cinematic-fog"></div>
-    <div class="floating-dust-container"></div>
     <div class="vignette"></div>
     <div class="ambient-glow" id="ambientGlow"></div>
     <div class="ground"></div>
@@ -99,6 +89,7 @@
     <p class="final-message" id="finalMessage">Til death do us part</p>
   </section>
 
+  <!-- رسالة خيبة الأمل -->
   <div id="failOverlay" class="overlay hidden">
     <p class="fail-message">شكراً لك لمحاولتك مع الأناناس. <span class="emoji">🍍❤️</span></p>
   </div>

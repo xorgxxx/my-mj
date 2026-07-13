@@ -26,7 +26,10 @@
 
     <p class="hint">كلما زادت سرعة السحب، دلّ ذلك على أنك تحب الأناناس أكثر.</p>
 
-    <button id="confirmBtn" class="confirm-btn hidden">تأكيد</button>
+    <div class="btn-row hidden" id="btnRow">
+      <button id="sureBtn" class="confirm-btn">متأكد</button>
+      <button id="retryBtnEarly" class="retry-btn retry-btn--ghost">إعادة المحاولة</button>
+    </div>
   </section>
 
   <!-- شاشة الانتقال -->
@@ -37,37 +40,62 @@
 
   <!-- مشهد نمو الوردة -->
   <section id="screen-scene" class="screen scene">
+    <div class="vignette"></div>
+    <div class="ambient-glow" id="ambientGlow"></div>
     <div class="ground"></div>
+    <div class="ground-glow" id="groundGlow"></div>
 
     <div class="plant" id="plant">
-      <div class="stem"></div>
+      <div class="stem-glow" id="stemGlow"></div>
+      <div class="stem">
+        <div class="thorn thorn--1"></div>
+        <div class="thorn thorn--2"></div>
+        <div class="thorn thorn--3"></div>
+      </div>
 
-      <div class="leaf leaf--l1"></div>
-      <div class="leaf leaf--r1"></div>
-      <div class="leaf leaf--l2"></div>
-      <div class="leaf leaf--r2"></div>
+      <div class="leaf leaf--l1"><span class="leaf-vein"></span></div>
+      <div class="leaf leaf--r1"><span class="leaf-vein"></span></div>
+      <div class="leaf leaf--l2"><span class="leaf-vein"></span></div>
+      <div class="leaf leaf--r2"><span class="leaf-vein"></span></div>
 
+      <div class="rose-glow" id="roseGlow"></div>
       <div class="rose">
-        <div class="petal petal--1"></div>
-        <div class="petal petal--2"></div>
-        <div class="petal petal--3"></div>
-        <div class="petal petal--4"></div>
-        <div class="petal petal--5"></div>
-        <div class="petal petal--6"></div>
-        <div class="petal petal--7"></div>
-        <div class="petal petal--8"></div>
+        <div class="sepal sepal--1"></div>
+        <div class="sepal sepal--2"></div>
+        <div class="sepal sepal--3"></div>
+
+        <div class="petal petal-outer petal--1"></div>
+        <div class="petal petal-outer petal--2"></div>
+        <div class="petal petal-outer petal--3"></div>
+        <div class="petal petal-outer petal--4"></div>
+        <div class="petal petal-outer petal--5"></div>
+        <div class="petal petal-outer petal--6"></div>
+
+        <div class="petal petal-mid petal--1"></div>
+        <div class="petal petal-mid petal--2"></div>
+        <div class="petal petal-mid petal--3"></div>
+        <div class="petal petal-mid petal--4"></div>
+        <div class="petal petal-mid petal--5"></div>
+
+        <div class="petal petal-inner petal--1"></div>
+        <div class="petal petal-inner petal--2"></div>
+        <div class="petal petal-inner petal--3"></div>
+        <div class="petal petal-inner petal--4"></div>
+
         <div class="bud-center"></div>
       </div>
     </div>
 
-    <p class="final-message" id="finalMessage">لقد أثبتَّ أنك تحب الأناناس من كل قلبك! <span class="emoji">❤️🍍</span></p>
+    <p class="final-message" id="finalMessage">Til death do us part</p>
   </section>
 
   <!-- رسالة خيبة الأمل -->
   <div id="failOverlay" class="overlay hidden">
-    <p class="fail-message">لقد ظننت أنك تحب الأناناس من كل قلبك...<br>لقد خيبت ظني. <span class="emoji">💔</span></p>
-    <button id="retryBtn" class="retry-btn">أعطني فرصة أخرى</button>
+    <p class="fail-message">شكراً لك لمحاولتك مع الأناناس. <span class="emoji">🍍❤️</span></p>
   </div>
+
+  <audio id="flowerAudio" src="flower.mp3" preload="auto"></audio>
+  <audio id="sadAudio" src="sad.mp3" preload="auto"></audio>
 
   <script src="script.js"></script>
 </body>

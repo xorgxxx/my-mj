@@ -4,16 +4,24 @@
   const sliderCard      = document.getElementById('sliderCard');
   const crackLine        = document.getElementById('crackLine');
   const percentLabel      = document.getElementById('percentLabel');
-  const confirmBtn          = document.getElementById('confirmBtn');
-  const retryBtn             = document.getElementById('retryBtn');
+  const btnRow               = document.getElementById('btnRow');
+  const sureBtn                = document.getElementById('sureBtn');
+  const retryBtnEarly            = document.getElementById('retryBtnEarly');
 
   const screenQuestion  = document.getElementById('screen-question');
   const screenTransition = document.getElementById('screen-transition');
   const screenScene       = document.getElementById('screen-scene');
   const failOverlay         = document.getElementById('failOverlay');
 
+  const flowerAudio = document.getElementById('flowerAudio');
+  const sadAudio     = document.getElementById('sadAudio');
+
   const FAST_THRESHOLD_MS = 550; // الوصول لـ 100% خلال هذه المدة يُعتبر سحبًا سريعًا
   const arabicDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+
+  // توقيت الانتقال إلى مشهد الوردة (شاشة الانتقال القصيرة)
+  const TRANSITION_DELAY_MS = 520;      // بعد تأثير الانكسار
+  const SCENE_START_DELAY_MS = 1100;    // مدة عرض شاشة الانتقال
 
   let dragStartTime = null;
   let successTriggered = false;
@@ -51,8 +59,8 @@
   function endDrag() {
     if (successTriggered) return;
     released = true;
-    // إذا لم يتحقق الشرط السريع، اعرض زر التأكيد
-    confirmBtn.classList.remove('hidden');
+    // إذا لم يتحقق الشرط السريع، اعرض الزرين
+    btnRow.classList.remove('hidden');
     dragStartTime = null;
   }
 
@@ -79,10 +87,29 @@
     } catch (e) { /* الصوت اختياري، تجاهل أي خطأ */ }
   }
 
+  function playAudioSafely(audioEl) {
+    if (!audioEl) return;
+    try {
+      audioEl.currentTime = 0;
+      const playPromise = audioEl.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(() => { /* قد يمنع المتصفح التشغيل التلقائي، تجاهل بصمت */ });
+      }
+    } catch (e) { /* تجاهل */ }
+  }
+
+  function stopAudioSafely(audioEl) {
+    if (!audioEl) return;
+    try {
+      audioEl.pause();
+      audioEl.currentTime = 0;
+    } catch (e) { /* تجاهل */ }
+  }
+
   function triggerSuccess() {
     successTriggered = true;
     slider.disabled = true;
-    confirmBtn.classList.add('hidden');
+    btnRow.classList.add('hidden');
 
     vibrateIfPossible([40, 30, 60]);
     playPopSound();
@@ -93,18 +120,23 @@
     setTimeout(() => {
       screenQuestion.classList.remove('active');
       screenTransition.classList.add('active');
-    }, 520);
+    }, TRANSITION_DELAY_MS);
 
     // بعد الشاشة الانتقالية القصيرة، تبدأ رسوم نمو الوردة
     setTimeout(() => {
       screenTransition.classList.remove('active');
       screenScene.classList.add('active');
       // إضافة الكلاس يشغّل كل تسلسل الحركات المعرّف في CSS
-      requestAnimationFrame(() => screenScene.classList.add('play'));
-    }, 520 + 1100);
+      requestAnimationFrame(() => {
+        screenScene.classList.add('play');
+        // تشغيل الموسيقى بمجرد بدء تشكّل الوردة (بداية نمو الساق) وليس بعد اكتمالها
+        playAudioSafely(flowerAudio);
+      });
+    }, TRANSITION_DELAY_MS + SCENE_START_DELAY_MS);
   }
 
   function showFailMessage() {
+    playAudioSafely(sadAudio);
     failOverlay.classList.remove('hidden');
   }
 
@@ -116,8 +148,11 @@
     slider.value = 0;
     updateVisual(0);
 
-    confirmBtn.classList.add('hidden');
+    btnRow.classList.add('hidden');
     sliderCard.classList.remove('crack');
+
+    stopAudioSafely(flowerAudio);
+    stopAudioSafely(sadAudio);
 
     failOverlay.classList.add('hidden');
     screenScene.classList.remove('active', 'play');
@@ -135,8 +170,8 @@
   slider.addEventListener('touchend', endDrag);
   slider.addEventListener('change', endDrag);
 
-  confirmBtn.addEventListener('click', showFailMessage);
-  retryBtn.addEventListener('click', resetExperience);
+  sureBtn.addEventListener('click', showFailMessage);
+  retryBtnEarly.addEventListener('click', resetExperience);
 
   updateVisual(0);
 })();

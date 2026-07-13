@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>كم تحب الأناناس؟ 🍍</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- شاشة السؤال -->
+  <section id="screen-question" class="screen active">
+    <div class="pine-decor pine-decor--left">🍍</div>
+    <div class="pine-decor pine-decor--right">🍍</div>
+
+    <h1 class="title">كم تحب الأناناس؟ <span class="emoji">🍍</span></h1>
+
+    <div class="slider-card" id="sliderCard">
+      <div class="slider-wrap" id="sliderWrap">
+        <div class="slider-fill" id="sliderFill"></div>
+        <input type="range" id="slider" min="0" max="100" value="0" step="1" aria-label="مقياس حب الأناناس">
+        <div class="crack-line" id="crackLine"></div>
+      </div>
+      <div class="percent-label" id="percentLabel">٠٪</div>
+    </div>
+
+    <p class="hint">كلما زادت سرعة السحب، دلّ ذلك على أنك تحب الأناناس أكثر.</p>
+
+    <button id="confirmBtn" class="confirm-btn hidden">تأكيد</button>
+  </section>
+
+  <!-- شاشة الانتقال -->
+  <section id="screen-transition" class="screen transition-screen">
+    <div class="burst"></div>
+    <div class="burst burst--2"></div>
+  </section>
+
+  <!-- مشهد نمو الوردة -->
+  <section id="screen-scene" class="screen scene">
+    <div class="ground"></div>
+
+    <div class="plant" id="plant">
+      <div class="stem"></div>
+
+      <div class="leaf leaf--l1"></div>
+      <div class="leaf leaf--r1"></div>
+      <div class="leaf leaf--l2"></div>
+      <div class="leaf leaf--r2"></div>
+
+      <div class="rose">
+        <div class="petal petal--1"></div>
+        <div class="petal petal--2"></div>
+        <div class="petal petal--3"></div>
+        <div class="petal petal--4"></div>
+        <div class="petal petal--5"></div>
+        <div class="petal petal--6"></div>
+        <div class="petal petal--7"></div>
+        <div class="petal petal--8"></div>
+        <div class="bud-center"></div>
+      </div>
+    </div>
+
+    <p class="final-message" id="finalMessage">لقد أثبتَّ أنك تحب الأناناس من كل قلبك! <span class="emoji">❤️🍍</span></p>
+  </section>
+
+  <!-- رسالة خيبة الأمل -->
+  <div id="failOverlay" class="overlay hidden">
+    <p class="fail-message">لقد ظننت أنك تحب الأناناس من كل قلبك...<br>لقد خيبت ظني. <span class="emoji">💔</span></p>
+    <button id="retryBtn" class="retry-btn">أعطني فرصة أخرى</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

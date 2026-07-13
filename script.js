@@ -12,20 +12,38 @@
   const screenTransition = document.getElementById('screen-transition');
   const screenScene       = document.getElementById('screen-scene');
   const failOverlay         = document.getElementById('failOverlay');
+  
+  // العناصر المضافة حديثاً للتحكم السينمائي والمشهد الختامي
+  const pineappleGratitudeText = document.getElementById('pineappleGratitudeText');
+  const cinematicEndingScene  = document.getElementById('cinematicEndingScene');
+  const plant                 = document.getElementById('plant');
+  const finalMessage          = document.getElementById('finalMessage');
 
   const flowerAudio = document.getElementById('flowerAudio');
   const sadAudio     = document.getElementById('sadAudio');
 
-  const FAST_THRESHOLD_MS = 550; // الوصول لـ 100% خلال هذه المدة يُعتبر سحبًا سريعًا
   const arabicDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
 
-  // توقيت الانتقال إلى مشهد الوردة (شاشة الانتقال القصيرة)
-  const TRANSITION_DELAY_MS = 520;      // بعد تأثير الانكسار
-  const SCENE_START_DELAY_MS = 1100;    // مدة عرض شاشة الانتقال
+  // توقيت الانتقال السينمائي إلى مشهد الوردة
+  const TRANSITION_DELAY_MS = 500;      
+  const SCENE_START_DELAY_MS = 1200;    
 
-  let dragStartTime = null;
   let successTriggered = false;
-  let released = false;
+  let userInteractedWithAudio = false;
+
+  // تسجيل أول تفاعل للمستخدم لضمان تشغيل الموسيقى في حال حظر المتصفح للتشغيل التلقائي
+  const setupAudioAutoplayFallback = () => {
+    if (userInteractedWithAudio) return;
+    userInteractedWithAudio = true;
+    if (successTriggered) {
+      playAudioSafely(flowerAudio);
+    }
+    // إزالة المستمعين بعد التفاعل الأول
+    window.removeEventListener('click', setupAudioAutoplayFallback);
+    window.removeEventListener('touchstart', setupAudioAutoplayFallback);
+  };
+  window.addEventListener('click', setupAudioAutoplayFallback);
+  window.addEventListener('touchstart', setupAudioAutoplayFallback, { passive: true });
 
   function toArabicNumber(num) {
     return String(num).split('').map(d => arabicDigits[d] ?? d).join('');
@@ -34,12 +52,18 @@
   function updateVisual(value) {
     sliderFill.style.width = value + '%';
     percentLabel.textContent = toArabicNumber(value) + '٪';
-  }
 
-  function startDrag() {
-    if (successTriggered) return;
-    dragStartTime = performance.now();
-    released = false;
+    // تأثيرات ديناميكية فخمة تزداد كلما اقتربت النسبة من 100%
+    const factor = value / 100;
+    
+    // زيادة توهج شريط السحب وقوة اللون الأحمر اللامع تدريجياً
+    sliderFill.style.boxShadow = `0 0 ${10 + factor * 25}px rgba(255, 18, 43, ${0.4 + factor * 0.6})`;
+    sliderCard.style.borderColor = `rgba(255, 45, 67, ${0.15 + factor * 0.55})`;
+    sliderCard.style.boxShadow = `0 25px 50px rgba(0, 0, 0, 0.9), 0 0 ${20 + factor * 30}px rgba(255, 45, 67, ${factor * 0.35})`;
+    
+    // إضاءة حول المؤشر والنسبة المئوية تزداد بريقاً
+    percentLabel.style.color = `rgb(255, ${77 + (1 - factor) * 100}, ${97 + (1 - factor) * 100})`;
+    percentLabel.style.textShadow = `0 0 ${8 + factor * 16}px rgba(255, 45, 67, ${0.5 + factor * 0.5})`;
   }
 
   function onInput(e) {
@@ -48,20 +72,16 @@
 
     if (successTriggered) return;
 
+    // بمجرد وصول المؤشر إلى 100% ينتقل مباشرة وبسلاسة تامة دون شروط تعجيزية
     if (value >= 100) {
-      const elapsed = dragStartTime ? performance.now() - dragStartTime : Infinity;
-      if (elapsed <= FAST_THRESHOLD_MS) {
-        triggerSuccess();
-      }
+      triggerSuccess();
     }
   }
 
   function endDrag() {
     if (successTriggered) return;
-    released = true;
-    // إذا لم يتحقق الشرط السريع، اعرض الزرين
+    // الأزرار تظهر فقط كخيار إضافي للمستخدم طالما لم يصل للـ 100%
     btnRow.classList.remove('hidden');
-    dragStartTime = null;
   }
 
   function vibrateIfPossible(pattern) {
@@ -77,14 +97,14 @@
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'triangle';
-      osc.frequency.setValueAtTime(180, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.35);
-      gain.gain.setValueAtTime(0.25, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      osc.frequency.setValueAtTime(220, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.4);
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
       osc.connect(gain).connect(ctx.destination);
       osc.start();
-      osc.stop(ctx.currentTime + 0.4);
-    } catch (e) { /* الصوت اختياري، تجاهل أي خطأ */ }
+      osc.stop(ctx.currentTime + 0.45);
+    } catch (e) { /* تجاهل بصمت */ }
   }
 
   function playAudioSafely(audioEl) {
@@ -93,16 +113,8 @@
       audioEl.currentTime = 0;
       const playPromise = audioEl.play();
       if (playPromise && typeof playPromise.catch === 'function') {
-        playPromise.catch(() => { /* قد يمنع المتصفح التشغيل التلقائي، تجاهل بصمت */ });
+        playPromise.catch(() => { /* حظر التشغيل التلقائي يتم معالجته عبر تفاعل المستخدم */ });
       }
-    } catch (e) { /* تجاهل */ }
-  }
-
-  function stopAudioSafely(audioEl) {
-    if (!audioEl) return;
-    try {
-      audioEl.pause();
-      audioEl.currentTime = 0;
     } catch (e) { /* تجاهل */ }
   }
 
@@ -110,59 +122,82 @@
     successTriggered = true;
     slider.disabled = true;
     btnRow.classList.add('hidden');
+    
+    // إخفاء النص السفلي بهدوء عند النجاح والانتقال
+    if (pineappleGratitudeText) {
+      pineappleGratitudeText.style.opacity = '0';
+      pineappleGratitudeText.style.transform = 'translateY(15px)';
+    }
 
-    vibrateIfPossible([40, 30, 60]);
+    vibrateIfPossible([50, 40, 70]);
     playPopSound();
 
     sliderCard.classList.add('crack');
 
-    // بعد تأثير الانكسار، ننتقل للشاشة الانتقالية
+    // الانتقال السينمائي الناعم والتدريجي إلى الشاشة الانتقالية
     setTimeout(() => {
       screenQuestion.classList.remove('active');
       screenTransition.classList.add('active');
     }, TRANSITION_DELAY_MS);
 
-    // بعد الشاشة الانتقالية القصيرة، تبدأ رسوم نمو الوردة
+    // الانتقال إلى مشهد الوردة السينمائي الأسود بالكامل
     setTimeout(() => {
       screenTransition.classList.remove('active');
       screenScene.classList.add('active');
-      // إضافة الكلاس يشغّل كل تسلسل الحركات المعرّف في CSS
+      
       requestAnimationFrame(() => {
         screenScene.classList.add('play');
-        // تشغيل الموسيقى بمجرد بدء تشكّل الوردة (بداية نمو الساق) وليس بعد اكتمالها
+        // بدء تشغيل الموسيقى فوراً مع بدء تشكل الوردة ونمو الساق
         playAudioSafely(flowerAudio);
+        
+        // تفعيل تسلسل الأحداث السينمائية وحركات التفتح والهبوط الناعم
+        initCinematicRoseSequence();
       });
     }, TRANSITION_DELAY_MS + SCENE_START_DELAY_MS);
   }
 
+  // إدارة تسلسل مشهد الوردة السينمائي المطور
+  function initCinematicRoseSequence() {
+    // 1. إعادة تموضع الوردة في منتصف الشاشة تماماً أثناء التشكل والتفتح البطيء جداً
+    plant.style.transform = 'translate(-50%, -50%) scale(1)';
+
+    // 2. بعد اكتمال تفتح الوردة بالكامل (~ 11 ثانية من نمو البتلات بالـ CSS)، يبدأ هبوطها السينمائي الناعم جداً وكأنها تطفو
+    setTimeout(() => {
+      // هبوط انسيابي ناعم ومدروس للأعلى قليلاً ثم الاستقرار فوق النص بمسافة متوازنة تماماً وبحركة Ease In Out
+      plant.style.transform = 'translate(-50%, -80%) scale(1)';
+      
+      // 3. بعد استقرار الوردة فوق مكانها المخصص، يظهر النص النهائي بـ Fade In بطيء جداً وناعم
+      setTimeout(() => {
+        finalMessage.style.opacity = '1';
+        finalMessage.style.filter = 'blur(0px)';
+      }, 3000); // وقت متناسق مع نعومة الهبوط
+
+    }, 11000); 
+  }
+
+  // المشهد الختامي السينمائي (الكيان الغامض الممتص للضوء لمدة 10 ثوانٍ)
   function showFailMessage() {
     playAudioSafely(sadAudio);
     failOverlay.classList.remove('hidden');
+    
+    // بدء تأثير امتصاص الضوء والعتمة التدريجية طوال 10 ثوانٍ كاملة دون تقطيع
+    setTimeout(() => {
+      if (cinematicEndingScene) {
+        cinematicEndingScene.classList.add('triggered');
+        screenQuestion.classList.add('cinematic-light-fade');
+        
+        // إخفاء كارد السحب لتركيز الانتباه الكامل على الكيان الدخاني
+        sliderCard.style.transition = 'opacity 2s ease';
+        sliderCard.style.opacity = '0';
+        btnRow.style.transition = 'opacity 1.5s ease';
+        btnRow.style.opacity = '0';
+      }
+    }, 500);
   }
 
-  function resetExperience() {
-    successTriggered = false;
-    released = false;
-    dragStartTime = null;
-    slider.disabled = false;
-    slider.value = 0;
-    updateVisual(0);
-
-    btnRow.classList.add('hidden');
-    sliderCard.classList.remove('crack');
-
-    stopAudioSafely(flowerAudio);
-    stopAudioSafely(sadAudio);
-
-    failOverlay.classList.add('hidden');
-    screenScene.classList.remove('active', 'play');
-    screenTransition.classList.remove('active');
-    screenQuestion.classList.add('active');
-  }
-
-  // أحداث السحب — تدعم الفأرة واللمس
-  slider.addEventListener('pointerdown', startDrag);
-  slider.addEventListener('touchstart', startDrag, { passive: true });
+  // أحداث السحب واللمس فائقة الأداء والمطابقة للبنية السابقة 100%
+  slider.addEventListener('pointerdown', () => { if (!successTriggered) released = false; });
+  slider.addEventListener('touchstart', () => { if (!successTriggered) released = false; }, { passive: true });
 
   slider.addEventListener('input', onInput);
 
@@ -171,7 +206,42 @@
   slider.addEventListener('change', endDrag);
 
   sureBtn.addEventListener('click', showFailMessage);
-  retryBtnEarly.addEventListener('click', resetExperience);
+  
+  // تصفير التجربة وإرجاعها للحالة الفخمة الأصلية
+  retryBtnEarly.addEventListener('click', () => {
+    successTriggered = false;
+    slider.disabled = false;
+    slider.value = 0;
+    updateVisual(0);
+    btnRow.classList.add('hidden');
+    sliderCard.classList.remove('crack');
+    sliderCard.style.opacity = '1';
+    sliderCard.style.borderColor = 'rgba(255, 45, 67, 0.15)';
+    btnRow.style.opacity = '1';
+    
+    if (pineappleGratitudeText) {
+      pineappleGratitudeText.style.opacity = '1';
+      pineappleGratitudeText.style.transform = 'translateY(0)';
+    }
+    if (cinematicEndingScene) {
+      cinematicEndingScene.classList.remove('triggered');
+      screenQuestion.classList.remove('cinematic-light-fade');
+    }
 
+    // إيقاف آمن لكافة المقاطع الصوتية الحالية
+    if (flowerAudio) { flowerAudio.pause(); flowerAudio.currentTime = 0; }
+    if (sadAudio) { sadAudio.pause(); sadAudio.currentTime = 0; }
+
+    failOverlay.classList.add('hidden');
+    screenScene.classList.remove('active', 'play');
+    screenTransition.classList.remove('active');
+    screenQuestion.classList.add('active');
+    
+    plant.style.transform = 'translate(-50%, -50%)';
+    finalMessage.style.opacity = '0';
+    finalMessage.style.filter = 'blur(8px)';
+  });
+
+  // تهيئة بصرية مبدئية عند التحميل
   updateVisual(0);
 })();

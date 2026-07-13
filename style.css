@@ -10,6 +10,13 @@
   --rose-dark:#B5203A;
   --charcoal:#33261C;
   --shadow: rgba(51,38,28,0.15);
+
+  /* dark cinematic scene palette */
+  --scene-bg:#07070a;
+  --scene-bg-2:#0d0d12;
+  --glow-red:#ff2d43;
+  --glow-red-soft:#ff5a6b;
+  --glow-red-deep:#7a0f1c;
 }
 
 *{box-sizing:border-box;}
@@ -159,8 +166,17 @@ html,body{
   color:#6b5c4c;
 }
 
-.confirm-btn, .retry-btn{
+.btn-row{
   margin-top:28px;
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:center;
+  animation:pop-in .5s ease;
+}
+
+.confirm-btn, .retry-btn{
   padding:14px 42px;
   font-family:inherit;
   font-size:18px;
@@ -171,12 +187,22 @@ html,body{
   border-radius:50px;
   cursor:pointer;
   box-shadow:0 12px 24px rgba(230,57,80,0.35);
-  transition:transform .2s ease, box-shadow .2s ease;
-  animation:pop-in .5s ease;
+  transition:transform .2s ease, box-shadow .2s ease, background .2s ease;
 }
 .confirm-btn:hover, .retry-btn:hover{
   transform:translateY(-3px) scale(1.03);
   box-shadow:0 16px 30px rgba(230,57,80,0.45);
+}
+
+.retry-btn--ghost{
+  background:transparent;
+  color:var(--charcoal);
+  border:2px solid rgba(51,38,28,0.35);
+  box-shadow:none;
+}
+.retry-btn--ghost:hover{
+  background:rgba(51,38,28,0.08);
+  box-shadow:none;
 }
 
 @keyframes pop-in{
@@ -250,11 +276,33 @@ html,body{
   100%{ transform:scale(40); opacity:0; }
 }
 
-/* ---------- مشهد الوردة ---------- */
+/* ================================================================ */
+/* ---------- مشهد الوردة السينمائي المظلم ---------- */
+/* ================================================================ */
 
 .scene{
-  background:linear-gradient(180deg, #eafff0 0%, var(--cream) 55%);
+  background:radial-gradient(ellipse at 50% 70%, var(--scene-bg-2) 0%, var(--scene-bg) 70%);
   overflow:hidden;
+}
+
+/* تظليل حواف الشاشة لتركيز الانتباه على المركز */
+.vignette{
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse at 50% 65%, transparent 30%, rgba(0,0,0,0.75) 100%);
+  pointer-events:none;
+  z-index:5;
+}
+
+/* توهج محيطي عام يزداد مع تفتح الوردة */
+.ambient-glow{
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 50% 62%, rgba(255,45,67,0.0) 0%, transparent 55%);
+  pointer-events:none;
+  opacity:0;
+  transition:opacity 1s ease;
+  z-index:1;
 }
 
 .ground{
@@ -263,148 +311,338 @@ html,body{
   left:0;
   right:0;
   height:14vh;
-  background:linear-gradient(180deg, var(--leaf-dark), #17401d);
+  background:linear-gradient(180deg, #14171a, #030304);
   border-radius:50% 50% 0 0 / 100% 100% 0 0;
+  z-index:2;
+}
+
+.ground-glow{
+  position:absolute;
+  bottom:0;
+  left:50%;
+  width:60vw;
+  max-width:520px;
+  height:14vh;
+  transform:translateX(-50%);
+  background:radial-gradient(ellipse at 50% 100%, rgba(255,45,67,0.55), transparent 70%);
+  opacity:0;
+  filter:blur(6px);
+  z-index:3;
+  pointer-events:none;
 }
 
 .plant{
   position:relative;
   width:20px;
   height:0;
+  z-index:4;
+}
+
+/* توهج خلف الساق يمتد للأعلى مع نموها */
+.stem-glow{
+  position:absolute;
+  bottom:0;
+  right:-2px;
+  width:16px;
+  height:0;
+  background:linear-gradient(180deg, rgba(255,90,107,0.5), rgba(255,45,67,0.05));
+  filter:blur(8px);
+  opacity:0;
+  border-radius:10px;
+  z-index:0;
 }
 
 .stem{
   position:absolute;
   bottom:0;
   right:-3px;
-  width:10px;
+  width:9px;
   height:0;
-  background:linear-gradient(180deg, var(--leaf), var(--leaf-dark));
-  border-radius:6px;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,0.35) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.35) 100%),
+    linear-gradient(180deg, #3f8a4a 0%, #2c6b34 45%, #1a3d20 100%);
+  border-radius:6px 6px 3px 3px;
   transform-origin:bottom center;
+  box-shadow:inset 1px 0 2px rgba(255,255,255,0.15);
+  z-index:1;
 }
+
+.thorn{
+  position:absolute;
+  width:0;
+  height:0;
+  border-style:solid;
+  border-width:5px 4px 0 4px;
+  border-color:#2c6b34 transparent transparent transparent;
+  opacity:0;
+  filter:brightness(0.85);
+}
+.thorn--1{ bottom:22%; right:8px; transform:rotate(35deg); }
+.thorn--2{ bottom:48%; right:-6px; transform:rotate(-125deg); }
+.thorn--3{ bottom:70%; right:7px; transform:rotate(40deg); }
 
 .leaf{
   position:absolute;
   width:0;
   height:0;
-  background:linear-gradient(135deg, var(--leaf), var(--leaf-dark));
+  background:linear-gradient(135deg, #4aa856 0%, var(--leaf) 45%, var(--leaf-dark) 100%);
   border-radius:0 100% 0 100%;
   opacity:0;
   transform-origin:bottom center;
+  box-shadow:inset -3px -3px 6px rgba(0,0,0,0.35), inset 2px 2px 4px rgba(255,255,255,0.15);
+}
+.leaf-vein{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(115deg, transparent 46%, rgba(255,255,255,0.25) 49%, transparent 52%);
+  border-radius:inherit;
 }
 .leaf--l1{ bottom:18vh; right:2px; }
 .leaf--r1{ bottom:26vh; right:-14px; border-radius:100% 0 100% 0; }
 .leaf--l2{ bottom:34vh; right:4px; }
 .leaf--r2{ bottom:42vh; right:-12px; border-radius:100% 0 100% 0; }
 
+/* توهج أحمر خلف الوردة نفسها */
+.rose-glow{
+  position:absolute;
+  bottom:0;
+  right:-90px;
+  width:180px;
+  height:180px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(255,45,67,0.9) 0%, rgba(255,45,67,0.35) 35%, transparent 70%);
+  filter:blur(14px);
+  opacity:0;
+  transform:scale(0.3);
+  z-index:2;
+  pointer-events:none;
+}
+
 .rose{
   position:absolute;
   bottom:0;
-  right:-40px;
-  width:80px;
-  height:80px;
+  right:-42px;
+  width:84px;
+  height:84px;
   opacity:0;
   transform:scale(0);
+  z-index:3;
 }
 
-.petal{
+/* كأس الزهرة الأخضر خلف البتلات */
+.sepal{
   position:absolute;
-  width:40px;
-  height:56px;
-  top:50%;
+  width:26px;
+  height:40px;
+  top:58%;
   left:50%;
-  margin:-28px 0 0 -20px;
-  background:linear-gradient(180deg, #ff6b7f, var(--rose) 60%, var(--rose-dark));
-  border-radius:50% 50% 50% 50% / 65% 65% 35% 35%;
+  margin:-20px 0 0 -13px;
+  background:linear-gradient(180deg, #2c6b34, #17401d);
+  border-radius:0 100% 0 100%;
   transform-origin:50% 100%;
   opacity:0;
-  transform:rotate(var(--rot,0deg)) scale(0.1);
-  box-shadow:inset 0 -6px 10px rgba(0,0,0,0.15);
+  z-index:0;
 }
-.petal--1{ --rot:0deg; }
-.petal--2{ --rot:45deg; }
-.petal--3{ --rot:90deg; }
-.petal--4{ --rot:135deg; }
-.petal--5{ --rot:180deg; }
-.petal--6{ --rot:225deg; }
-.petal--7{ --rot:270deg; }
-.petal--8{ --rot:315deg; }
+.sepal--1{ transform:rotate(20deg) scale(0.2); }
+.sepal--2{ transform:rotate(140deg) scale(0.2); }
+.sepal--3{ transform:rotate(260deg) scale(0.2); }
+
+/* بتلات بثلاث طبقات: خارجية داكنة، وسطى، وداخلية فاتحة متوهجة */
+.petal{
+  position:absolute;
+  top:50%;
+  left:50%;
+  opacity:0;
+  transform-origin:50% 100%;
+  border-radius:50% 50% 50% 50% / 68% 68% 32% 32%;
+  transform:rotate(var(--rot,0deg)) scale(0.08);
+}
+
+.petal-outer{
+  width:46px;
+  height:64px;
+  margin:-58px 0 0 -23px;
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(255,255,255,0.25), transparent 45%),
+    linear-gradient(180deg, #ff4f61 0%, var(--rose) 45%, #7a0f1c 100%);
+  box-shadow:inset 0 -10px 16px rgba(0,0,0,0.45), inset 0 6px 10px rgba(255,255,255,0.08);
+  z-index:1;
+}
+.petal-mid{
+  width:38px;
+  height:52px;
+  margin:-49px 0 0 -19px;
+  background:
+    radial-gradient(ellipse at 50% 18%, rgba(255,255,255,0.35), transparent 50%),
+    linear-gradient(180deg, #ff7a86 0%, #f13a52 50%, var(--rose-dark) 100%);
+  box-shadow:inset 0 -8px 12px rgba(0,0,0,0.35), inset 0 5px 8px rgba(255,255,255,0.12);
+  z-index:2;
+}
+.petal-inner{
+  width:28px;
+  height:38px;
+  margin:-35px 0 0 -14px;
+  background:
+    radial-gradient(ellipse at 50% 15%, rgba(255,255,255,0.55), transparent 55%),
+    linear-gradient(180deg, #ffb3ba 0%, #ff6b7a 55%, var(--rose) 100%);
+  box-shadow:inset 0 -6px 8px rgba(122,15,28,0.4), inset 0 4px 6px rgba(255,255,255,0.25);
+  z-index:3;
+}
+
+.petal-outer.petal--1{ --rot:-38deg; }
+.petal-outer.petal--2{ --rot:22deg; }
+.petal-outer.petal--3{ --rot:82deg; }
+.petal-outer.petal--4{ --rot:142deg; }
+.petal-outer.petal--5{ --rot:202deg; }
+.petal-outer.petal--6{ --rot:262deg; }
+
+.petal-mid.petal--1{ --rot:0deg; }
+.petal-mid.petal--2{ --rot:72deg; }
+.petal-mid.petal--3{ --rot:144deg; }
+.petal-mid.petal--4{ --rot:216deg; }
+.petal-mid.petal--5{ --rot:288deg; }
+
+.petal-inner.petal--1{ --rot:15deg; }
+.petal-inner.petal--2{ --rot:105deg; }
+.petal-inner.petal--3{ --rot:195deg; }
+.petal-inner.petal--4{ --rot:285deg; }
 
 .bud-center{
   position:absolute;
-  width:22px;
-  height:22px;
+  width:16px;
+  height:16px;
   top:50%;
   left:50%;
-  margin:-11px 0 0 -11px;
-  background:radial-gradient(circle at 35% 30%, #ffd9de, var(--rose-dark));
+  margin:-8px 0 0 -8px;
+  background:radial-gradient(circle at 35% 30%, #fff0ce, #ff2d43 70%, #7a0f1c 100%);
   border-radius:50%;
   opacity:0;
-  z-index:2;
+  z-index:4;
+  box-shadow:0 0 10px rgba(255,45,67,0.8);
 }
 
 .final-message{
   position:absolute;
   bottom:6vh;
-  font-size:clamp(18px,3.2vw,28px);
+  font-size:clamp(20px,3.5vw,30px);
   font-weight:700;
+  font-style:italic;
+  letter-spacing:0.5px;
   max-width:90vw;
-  background:rgba(255,255,255,0.75);
-  padding:14px 26px;
-  border-radius:20px;
-  box-shadow:0 10px 24px var(--shadow);
+  color:#ffe4e6;
+  text-shadow:0 0 18px rgba(255,45,67,0.65), 0 2px 6px rgba(0,0,0,0.6);
   opacity:0;
+  filter:blur(10px);
+  z-index:6;
 }
 
-/* تشغيل الحركات عند إضافة كلاس play */
+/* ---------- تشغيل الحركات عند إضافة كلاس play ---------- */
+
+/* الساق تنمو ببطء وسلاسة */
 .scene.play .stem{
-  animation:growStem 1.1s cubic-bezier(.34,1.56,.64,1) forwards .1s;
+  animation:growStem 2.4s cubic-bezier(.34,1.2,.4,1) forwards .1s;
 }
-.scene.play .leaf--l1{ animation:growLeaf 0.7s ease forwards 0.9s; }
-.scene.play .leaf--r1{ animation:growLeaf 0.7s ease forwards 1.1s; }
-.scene.play .leaf--l2{ animation:growLeaf 0.7s ease forwards 1.3s; }
-.scene.play .leaf--r2{ animation:growLeaf 0.7s ease forwards 1.5s; }
-.scene.play .rose{ animation:showRose 0.5s ease forwards 1.7s; }
-.scene.play .bud-center{ animation:fadeScale 0.4s ease forwards 1.8s; }
+.scene.play .stem-glow{
+  animation:growStemGlow 2.4s ease forwards .1s;
+}
+.scene.play .thorn--1{ animation:fadeIn 0.4s ease forwards 1.3s; }
+.scene.play .thorn--2{ animation:fadeIn 0.4s ease forwards 1.7s; }
+.scene.play .thorn--3{ animation:fadeIn 0.4s ease forwards 2.0s; }
 
-.scene.play .petal--1{ animation:bloom 0.6s ease forwards 2.0s; }
-.scene.play .petal--2{ animation:bloom 0.6s ease forwards 2.1s; }
-.scene.play .petal--3{ animation:bloom 0.6s ease forwards 2.2s; }
-.scene.play .petal--4{ animation:bloom 0.6s ease forwards 2.3s; }
-.scene.play .petal--5{ animation:bloom 0.6s ease forwards 2.4s; }
-.scene.play .petal--6{ animation:bloom 0.6s ease forwards 2.5s; }
-.scene.play .petal--7{ animation:bloom 0.6s ease forwards 2.6s; }
-.scene.play .petal--8{ animation:bloom 0.6s ease forwards 2.7s; }
+.scene.play .leaf--l1{ animation:growLeaf 1s ease forwards 1.6s; }
+.scene.play .leaf--r1{ animation:growLeaf 1s ease forwards 1.9s; }
+.scene.play .leaf--l2{ animation:growLeaf 1s ease forwards 2.2s; }
+.scene.play .leaf--r2{ animation:growLeaf 1s ease forwards 2.5s; }
 
+.scene.play .rose{ animation:showRose 1s ease forwards 3.0s; }
+.scene.play .rose-glow{ animation:showRoseGlow 1.2s ease forwards 3.0s; }
+
+.scene.play .sepal--1{ animation:openSepal 0.8s ease forwards 3.1s; }
+.scene.play .sepal--2{ animation:openSepal 0.8s ease forwards 3.2s; }
+.scene.play .sepal--3{ animation:openSepal 0.8s ease forwards 3.3s; }
+
+.scene.play .bud-center{ animation:fadeScale 0.6s ease forwards 3.4s; }
+
+/* تفتح البتلات الداخلية أولاً، ثم الوسطى، ثم الخارجية — بطيء وتدريجي (~ 8-12 ثانية إجمالاً) */
+.scene.play .petal-inner.petal--1{ animation:bloom 2.2s ease-in-out forwards 3.6s; }
+.scene.play .petal-inner.petal--2{ animation:bloom 2.2s ease-in-out forwards 3.85s; }
+.scene.play .petal-inner.petal--3{ animation:bloom 2.2s ease-in-out forwards 4.1s; }
+.scene.play .petal-inner.petal--4{ animation:bloom 2.2s ease-in-out forwards 4.35s; }
+
+.scene.play .petal-mid.petal--1{ animation:bloom 2.4s ease-in-out forwards 4.8s; }
+.scene.play .petal-mid.petal--2{ animation:bloom 2.4s ease-in-out forwards 5.05s; }
+.scene.play .petal-mid.petal--3{ animation:bloom 2.4s ease-in-out forwards 5.3s; }
+.scene.play .petal-mid.petal--4{ animation:bloom 2.4s ease-in-out forwards 5.55s; }
+.scene.play .petal-mid.petal--5{ animation:bloom 2.4s ease-in-out forwards 5.8s; }
+
+.scene.play .petal-outer.petal--1{ animation:bloom 2.6s ease-in-out forwards 6.3s; }
+.scene.play .petal-outer.petal--2{ animation:bloom 2.6s ease-in-out forwards 6.6s; }
+.scene.play .petal-outer.petal--3{ animation:bloom 2.6s ease-in-out forwards 6.9s; }
+.scene.play .petal-outer.petal--4{ animation:bloom 2.6s ease-in-out forwards 7.2s; }
+.scene.play .petal-outer.petal--5{ animation:bloom 2.6s ease-in-out forwards 7.5s; }
+.scene.play .petal-outer.petal--6{ animation:bloom 2.6s ease-in-out forwards 7.8s; }
+
+/* التوهج الأحمر يزداد تدريجيًا مع كل مرحلة من التفتح ويكتمل عند اكتمال الوردة (~10.4s) */
+.scene.play .ambient-glow{ animation:ambientGlowUp 7s ease-in-out forwards 3.4s; }
+.scene.play .ground-glow{ animation:groundGlowUp 7s ease-in-out forwards 3.4s; }
+
+/* النص النهائي يظهر بعد ثانية من اكتمال التفتح (~10.4s + 1s) */
 .scene.play .final-message{
-  animation:fadeUp 0.9s ease forwards 3.3s;
+  animation:fadeUpBlur 1.8s ease forwards 11.4s;
 }
 
 @keyframes growStem{
   from{ height:0; }
   to{ height:38vh; }
 }
+@keyframes growStemGlow{
+  from{ height:0; opacity:0; }
+  to{ height:38vh; opacity:0.5; }
+}
+@keyframes fadeIn{
+  from{ opacity:0; }
+  to{ opacity:0.9; }
+}
 @keyframes growLeaf{
   from{ opacity:0; width:0; height:0; transform:scale(0) rotate(-20deg); }
-  to{ opacity:1; width:46px; height:30px; transform:scale(1) rotate(-10deg); }
+  to{ opacity:1; width:48px; height:32px; transform:scale(1) rotate(-10deg); }
 }
 @keyframes showRose{
   from{ opacity:0; transform:scale(0); }
   to{ opacity:1; transform:scale(1) translateY(-36vh); }
 }
+@keyframes showRoseGlow{
+  0%{ opacity:0; transform:scale(0.3) translateY(-36vh); }
+  100%{ opacity:0.35; transform:scale(1) translateY(-36vh); }
+}
+@keyframes openSepal{
+  from{ opacity:0; transform:rotate(var(--r,0deg)) scale(0.2); }
+  to{ opacity:1; transform:rotate(var(--r,0deg)) scale(1); }
+}
+.sepal--1{ --r:20deg; }
+.sepal--2{ --r:140deg; }
+.sepal--3{ --r:260deg; }
 @keyframes fadeScale{
   from{ opacity:0; transform:scale(0); }
   to{ opacity:1; transform:scale(1); }
 }
 @keyframes bloom{
-  0%{ opacity:0; transform:rotate(var(--rot)) scale(0.1); }
-  70%{ opacity:1; transform:rotate(var(--rot)) scale(1.15); }
-  100%{ opacity:1; transform:rotate(var(--rot)) scale(1); }
+  0%{ opacity:0; transform:rotate(var(--rot)) scale(0.08) translateY(0); }
+  55%{ opacity:1; transform:rotate(var(--rot)) scale(0.9) translateY(-2px); }
+  80%{ transform:rotate(var(--rot)) scale(1.06) translateY(-1px); }
+  100%{ opacity:1; transform:rotate(var(--rot)) scale(1) translateY(0); }
 }
-@keyframes fadeUp{
-  from{ opacity:0; transform:translateY(20px); }
-  to{ opacity:1; transform:translateY(0); }
+@keyframes ambientGlowUp{
+  0%{ opacity:0; }
+  100%{ opacity:1; background:radial-gradient(circle at 50% 62%, rgba(255,45,67,0.35) 0%, transparent 60%); }
+}
+@keyframes groundGlowUp{
+  0%{ opacity:0; }
+  100%{ opacity:0.85; }
+}
+@keyframes fadeUpBlur{
+  0%{ opacity:0; filter:blur(10px); transform:translateY(16px); }
+  100%{ opacity:1; filter:blur(0px); transform:translateY(0); }
 }
 
 /* ---------- رسالة الفشل ---------- */
@@ -430,11 +668,16 @@ html,body{
   font-weight:700;
   line-height:1.7;
   max-width:640px;
-  animation:pop-in 0.6s ease;
+  opacity:0;
+  animation:fadeInMessage 1.1s ease forwards 0.15s;
 }
 @keyframes fadeIn{
   from{ opacity:0; }
   to{ opacity:1; }
+}
+@keyframes fadeInMessage{
+  from{ opacity:0; transform:translateY(10px); }
+  to{ opacity:1; transform:translateY(0); }
 }
 
 /* ---------- التجاوب ---------- */
@@ -442,4 +685,6 @@ html,body{
 @media (max-width:480px){
   .slider-card{ padding:24px 18px 18px; }
   .final-message{ font-size:16px; padding:10px 18px; }
+  .btn-row{ flex-direction:column; width:100%; }
+  .btn-row button{ width:100%; }
 }

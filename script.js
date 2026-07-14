@@ -7,11 +7,16 @@
   const btnRow               = document.getElementById('btnRow');
   const sureBtn                = document.getElementById('sureBtn');
   const retryBtnEarly            = document.getElementById('retryBtnEarly');
+  const sliderGlow                = document.getElementById('sliderGlow');
+  const thumbHalo                   = document.getElementById('thumbHalo');
 
   const screenQuestion  = document.getElementById('screen-question');
   const screenTransition = document.getElementById('screen-transition');
   const screenScene       = document.getElementById('screen-scene');
-  const failOverlay         = document.getElementById('failOverlay');
+  const screenFail          = document.getElementById('screen-fail');
+
+  const noticeOverlay = document.getElementById('noticeOverlay');
+  const noticeOkBtn     = document.getElementById('noticeOkBtn');
 
   const flowerAudio = document.getElementById('flowerAudio');
   const sadAudio     = document.getElementById('sadAudio');
@@ -34,6 +39,22 @@
   function updateVisual(value) {
     sliderFill.style.width = value + '%';
     percentLabel.textContent = toArabicNumber(value) + '٪';
+
+    // كلما اقترب المؤشر من ١٠٠٪: يزداد التوهج والهالة الضوئية حوله دون تغيير أي منطق موجود
+    const intensity = Math.min(1, value / 100);
+    if (sliderGlow) {
+      sliderGlow.style.setProperty('--glow-i', (intensity * 0.9).toFixed(3));
+      sliderGlow.style.setProperty('--glow-x', value + '%');
+    }
+    if (thumbHalo) {
+      const wrapWidth = slider.offsetWidth || 0;
+      const thumbX = wrapWidth * (value / 100);
+      thumbHalo.style.setProperty('--halo-x', thumbX + 'px');
+      thumbHalo.style.setProperty('--halo-i', (intensity * 0.75).toFixed(3));
+    }
+    if (sliderFill) {
+      sliderFill.style.boxShadow = `0 0 ${8 + intensity * 22}px rgba(255,45,67,${0.3 + intensity * 0.45})`;
+    }
   }
 
   function startDrag() {
@@ -137,7 +158,8 @@
 
   function showFailMessage() {
     playAudioSafely(sadAudio);
-    failOverlay.classList.remove('hidden');
+    screenQuestion.classList.remove('active');
+    screenFail.classList.add('active');
   }
 
   function resetExperience() {
@@ -154,7 +176,7 @@
     stopAudioSafely(flowerAudio);
     stopAudioSafely(sadAudio);
 
-    failOverlay.classList.add('hidden');
+    screenFail.classList.remove('active');
     screenScene.classList.remove('active', 'play');
     screenTransition.classList.remove('active');
     screenQuestion.classList.add('active');
@@ -172,6 +194,40 @@
 
   sureBtn.addEventListener('click', showFailMessage);
   retryBtnEarly.addEventListener('click', resetExperience);
+
+  // التنويه: يظهر مرة واحدة فقط عند دخول الموقع، قبل استخدام الشريط، ولا يظهر مرة أخرى أثناء نفس الزيارة
+  function initNotice() {
+    if (!noticeOverlay || !noticeOkBtn) return;
+
+    let alreadySeen = false;
+    try {
+      alreadySeen = sessionStorage.getItem('pineappleNoticeSeen') === '1';
+    } catch (e) { /* تجاهل، بعض المتصفحات قد تمنع sessionStorage */ }
+
+    if (alreadySeen) {
+      noticeOverlay.classList.add('notice-hidden');
+      slider.disabled = false;
+      return;
+    }
+
+    slider.disabled = true;
+    requestAnimationFrame(() => {
+      noticeOverlay.classList.add('active');
+    });
+
+    noticeOkBtn.addEventListener('click', () => {
+      noticeOverlay.classList.remove('active');
+      slider.disabled = successTriggered ? true : false;
+      try {
+        sessionStorage.setItem('pineappleNoticeSeen', '1');
+      } catch (e) { /* تجاهل */ }
+      setTimeout(() => {
+        noticeOverlay.classList.add('notice-hidden');
+      }, 520);
+    });
+  }
+
+  initNotice();
 
   updateVisual(0);
 })();

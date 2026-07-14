@@ -8,8 +8,21 @@
 </head>
 <body>
 
+  <!-- التنويه -->
+  <div id="noticeOverlay" class="notice-overlay">
+    <div class="notice-card">
+      <h2 class="notice-title">تنويه</h2>
+      <p class="notice-text">كلما زادت سرعة سحب المؤشر، دلّ ذلك على أن محبتك للأناناس أكبر.</p>
+      <button id="noticeOkBtn" class="notice-btn">موافق</button>
+    </div>
+  </div>
+
   <!-- شاشة السؤال -->
   <section id="screen-question" class="screen active">
+    <div class="q-ambient-glow"></div>
+    <div class="fruit-blur fruit-blur--1"></div>
+    <div class="fruit-blur fruit-blur--2"></div>
+    <div class="fruit-blur fruit-blur--3"></div>
     <div class="pine-decor pine-decor--left">🍍</div>
     <div class="pine-decor pine-decor--right">🍍</div>
 
@@ -18,7 +31,9 @@
     <div class="slider-card" id="sliderCard">
       <div class="slider-wrap" id="sliderWrap">
         <div class="slider-fill" id="sliderFill"></div>
+        <div class="slider-glow" id="sliderGlow"></div>
         <input type="range" id="slider" min="0" max="100" value="0" step="1" aria-label="مقياس حب الأناناس">
+        <div class="thumb-halo" id="thumbHalo"></div>
         <div class="crack-line" id="crackLine"></div>
       </div>
       <div class="percent-label" id="percentLabel">٠٪</div>
@@ -89,10 +104,25 @@
     <p class="final-message" id="finalMessage">Til death do us part</p>
   </section>
 
-  <!-- رسالة خيبة الأمل -->
-  <div id="failOverlay" class="overlay hidden">
-    <p class="fail-message">شكراً لك لمحاولتك مع الأناناس. <span class="emoji">🍍❤️</span></p>
-  </div>
+  <!-- مشهد الرفض / الكيان الغامض -->
+  <section id="screen-fail" class="screen fail-scene">
+    <p class="fail-message" id="failMessage">لقد اعتقدت أنك تكن للأناناس أكثر من هذا.</p>
+
+    <div class="fail-void">
+      <div class="fail-dust fail-dust--1"></div>
+      <div class="fail-dust fail-dust--2"></div>
+      <div class="fail-dust fail-dust--3"></div>
+      <div class="fail-dust fail-dust--4"></div>
+      <div class="fail-fog"></div>
+      <div class="fail-entity" id="failEntity">
+        <div class="fail-entity-core"></div>
+        <div class="fail-entity-wisp fail-entity-wisp--1"></div>
+        <div class="fail-entity-wisp fail-entity-wisp--2"></div>
+        <div class="fail-entity-wisp fail-entity-wisp--3"></div>
+      </div>
+      <div class="fail-blackout" id="failBlackout"></div>
+    </div>
+  </section>
 
   <audio id="flowerAudio" src="flower.mp3" preload="auto"></audio>
   <audio id="sadAudio" src="sad.mp3" preload="auto"></audio>

@@ -55,14 +55,10 @@
 
   <!-- مشهد نمو الوردة -->
   <section id="screen-scene" class="screen scene">
-    <div class="canvas-texture"></div>
     <div class="vignette"></div>
     <div class="ambient-glow" id="ambientGlow"></div>
     <div class="ground"></div>
     <div class="ground-glow" id="groundGlow"></div>
-    <div class="scene-dust scene-dust--a"></div>
-    <div class="scene-dust scene-dust--b"></div>
-    <div class="canvas-frame"></div>
 
     <div class="plant" id="plant">
       <div class="stem-glow" id="stemGlow"></div>
@@ -79,33 +75,34 @@
 
       <div class="rose-glow" id="roseGlow"></div>
       <div class="rose">
-        <div class="sepal sepal--1"><span class="piece-flash"></span></div>
-        <div class="sepal sepal--2"><span class="piece-flash"></span></div>
-        <div class="sepal sepal--3"><span class="piece-flash"></span></div>
+        <div class="sepal sepal--1"></div>
+        <div class="sepal sepal--2"></div>
+        <div class="sepal sepal--3"></div>
 
-        <div class="petal petal-outer petal--1"><span class="piece-flash"></span></div>
-        <div class="petal petal-outer petal--2"><span class="piece-flash"></span></div>
-        <div class="petal petal-outer petal--3"><span class="piece-flash"></span></div>
-        <div class="petal petal-outer petal--4"><span class="piece-flash"></span></div>
-        <div class="petal petal-outer petal--5"><span class="piece-flash"></span></div>
-        <div class="petal petal-outer petal--6"><span class="piece-flash"></span></div>
+        <div class="petal petal-outer petal--1"></div>
+        <div class="petal petal-outer petal--2"></div>
+        <div class="petal petal-outer petal--3"></div>
+        <div class="petal petal-outer petal--4"></div>
+        <div class="petal petal-outer petal--5"></div>
+        <div class="petal petal-outer petal--6"></div>
 
-        <div class="petal petal-mid petal--1"><span class="piece-flash"></span></div>
-        <div class="petal petal-mid petal--2"><span class="piece-flash"></span></div>
-        <div class="petal petal-mid petal--3"><span class="piece-flash"></span></div>
-        <div class="petal petal-mid petal--4"><span class="piece-flash"></span></div>
-        <div class="petal petal-mid petal--5"><span class="piece-flash"></span></div>
+        <div class="petal petal-mid petal--1"></div>
+        <div class="petal petal-mid petal--2"></div>
+        <div class="petal petal-mid petal--3"></div>
+        <div class="petal petal-mid petal--4"></div>
+        <div class="petal petal-mid petal--5"></div>
 
-        <div class="petal petal-inner petal--1"><span class="piece-flash"></span></div>
-        <div class="petal petal-inner petal--2"><span class="piece-flash"></span></div>
-        <div class="petal petal-inner petal--3"><span class="piece-flash"></span></div>
-        <div class="petal petal-inner petal--4"><span class="piece-flash"></span></div>
+        <div class="petal petal-inner petal--1"></div>
+        <div class="petal petal-inner petal--2"></div>
+        <div class="petal petal-inner petal--3"></div>
+        <div class="petal petal-inner petal--4"></div>
 
         <div class="bud-center"></div>
       </div>
     </div>
 
     <p class="final-message" id="finalMessage">Til death do us part</p>
+    <div class="scene-fade" id="sceneFade"></div>
   </section>
 
   <!-- مشهد الرفض / الكيان الغامض -->
@@ -118,6 +115,31 @@
       <div class="fail-dust fail-dust--3"></div>
       <div class="fail-dust fail-dust--4"></div>
       <div class="fail-fog"></div>
+
+      <div class="fail-heart" id="failHeart">
+        <svg viewBox="0 0 100 90" class="fail-heart-svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="heartGradL" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#ff5c6c"/>
+              <stop offset="100%" stop-color="#6b0d16"/>
+            </linearGradient>
+            <linearGradient id="heartGradR" x1="1" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ff5c6c"/>
+              <stop offset="100%" stop-color="#6b0d16"/>
+            </linearGradient>
+          </defs>
+          <path class="fail-heart-half fail-heart-left"
+            d="M50,88 C20,65 0,45 0,25 C0,10 12,0 25,0 C35,0 45,6 50,18 Z"
+            fill="url(#heartGradL)"/>
+          <path class="fail-heart-half fail-heart-right"
+            d="M50,88 C80,65 100,45 100,25 C100,10 88,0 75,0 C65,0 55,6 50,18 Z"
+            fill="url(#heartGradR)"/>
+          <path class="fail-heart-crack" pathLength="100"
+            d="M50,18 L45,30 L55,40 L43,52 L57,64 L46,76 L50,88"
+            fill="none" stroke="#0a0000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
       <div class="fail-entity" id="failEntity">
         <div class="fail-entity-core"></div>
         <div class="fail-entity-wisp fail-entity-wisp--1"></div>

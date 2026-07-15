@@ -1,0 +1,32 @@
+<!-- components/rose.html
+  SVG component for the animated rose. Include this where you want the rose to appear (e.g., inside .plant).
+  Make sure style.rose-enhancements.css is linked after style.css and assets/rose-component.js is loaded.
+-->
+<div id="rose-svg-container">
+  <svg id="rose-svg" viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="4" result="blur"/>
+        <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.45 0"/>
+      </filter>
+    </defs>
+
+    <!-- shadow (hidden until settle) -->
+    <ellipse id="roseShadow" class="rose-svg-shadow" cx="100" cy="240" rx="48" ry="14" fill="rgba(0,0,0,0.45)" style="opacity:0; filter:url(#softShadow)"/>
+
+    <!-- group to move as one object -->
+    <g id="roseGroup" transform="translate(0,0)">
+      <!-- stem path (drawn from bottom up) -->
+      <path id="stemPath" d="M100 260 C100 220 98 160 108 120" stroke="#2f6b3a" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- ground line (drawn left-to-right from stem base) -->
+      <path id="groundPath" d="M20 250 C60 246 140 246 180 250" stroke="#4a2f2a" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- bloom outline (single contour) -->
+      <path id="bloomOutline" d="M100 118 C88 92 68 86 56 102 C48 114 52 136 72 146 C86 154 100 152 112 146 C136 134 156 112 148 100 C136 80 116 84 100 118 Z" stroke="#c92b39" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- bloom fill (same shape) -->
+      <path id="bloomFill" d="M100 118 C88 92 68 86 56 102 C48 114 52 136 72 146 C86 154 100 152 112 146 C136 134 156 112 148 100 C136 80 116 84 100 118 Z" fill="#c92b39" opacity="0"/>
+    </g>
+  </svg>
+</div>

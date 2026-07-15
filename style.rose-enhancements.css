@@ -1,129 +1,160 @@
 /* style.rose-enhancements.css
-   Overrides to make the rose more realistic and to keep the fallen rose and petals visible on the scene.
-   Add this file after style.css in HTML so these rules override previous ones (same selectors / later load order).
+   Rebuild the rose as a single realistic red bloom that grows from the stem,
+   opens (bloom), and then falls as one solid object. Also hide segmented falling petals.
+   Load this AFTER style.css.
 */
 
 :root{
-  /* small tweak: a slightly darker petal mid tone for realism */
-  --rose-mid:#ff6b7a;
+  --rose-red:#c92b39; /* core red */
+  --rose-red-deep:#7a0f1c;
+  --rose-highlight:#ff8a92;
 }
 
-/* Make the rose body more layered and 3D using pseudo-elements */
+/* Hide previous segmented falling petals — user asked for a single solid rose */
+.falling-petal{ display:none !important; }
+
+/* The single-piece rose: base element with layered gradients and 2 pseudo elements.
+   The rose is built visually from the stem outward; pseudo-elements provide outer
+   and inner petal volumes, while background gradients and shadows add depth. */
 .rose{
   position:absolute;
   bottom:0;
   right:-42px;
-  width:120px; /* slightly larger for more detail */
+  width:120px;
   height:120px;
-  opacity:1;
-  transform:translateY(0) scale(1);
-  transform-origin:50% 60%;
+  transform-origin:50% 80%;
   z-index:3;
-  border-radius:48% 52% 50% 50%;
-  background:
-    radial-gradient(circle at 40% 28%, #fff2df 0%, #ffd2d6 6%, transparent 18%),
-    radial-gradient(circle at 55% 52%, rgba(255,100,120,0.12), transparent 40%),
-    radial-gradient(circle at 50% 40%, #ff8a92 0%, var(--rose-mid) 38%, var(--rose) 70%, #6b0d18 100%);
-  box-shadow: inset -6px -12px 24px rgba(0,0,0,0.55), 0 22px 40px rgba(0,0,0,0.7), 0 6px 18px rgba(255,45,67,0.06);
-  filter:contrast(1.03) saturate(1.08);
-  transition:transform .9s cubic-bezier(.2,.8,.2,1), box-shadow .6s ease, opacity .6s ease;
-}
-
-/* two large overlapping pseudo-petals to add volume */
-.rose::before,
-.rose::after{
-  content:'';
-  position:absolute;
-  left:50%;
-  top:34%;
-  width:86%;
-  height:86%;
-  margin-left:-43%;
-  margin-top:-28%;
-  border-radius:52% 48% 48% 52% / 58% 58% 42% 42%;
-  background:
-    radial-gradient(circle at 36% 24%, rgba(255,255,255,0.55), transparent 30%),
-    linear-gradient(180deg, #ffb3ba 0%, var(--rose-mid) 45%, var(--rose) 100%);
-  box-shadow: inset 0 -6px 12px rgba(122,15,28,0.35), 0 8px 18px rgba(0,0,0,0.45);
   pointer-events:none;
-  transform-origin:50% 70%;
-}
-.rose::before{ transform:rotate(-18deg) scale(0.98); z-index:4; opacity:0.98; }
-.rose::after{ transform:rotate(16deg) scale(0.95); z-index:2; opacity:0.96; }
 
-/* subtle specular highlight on top of petals */
-.rose .petal-gloss{
-  position:absolute; left:50%; top:10%; transform:translateX(-50%);
-  width:48%; height:24%; border-radius:50%;
-  background:linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.04));
-  mix-blend-mode:screen; pointer-events:none; z-index:6; opacity:0.95;
+  /* layered petals: inner highlights, midtone, deep edges */
+  background:
+    radial-gradient(circle at 48% 30%, rgba(255,230,232,0.95) 0%, rgba(255,190,195,0.85) 6%, transparent 18%),
+    radial-gradient(circle at 58% 50%, rgba(255,140,150,0.12), transparent 32%),
+    radial-gradient(circle at 50% 60%, var(--rose-highlight) 0%, var(--rose-red) 36%, var(--rose-red-deep) 78%);
+
+  border-radius:46% 54% 52% 48% / 60% 60% 40% 40%;
+  box-shadow:
+    inset -8px -18px 28px rgba(0,0,0,0.55),
+    0 18px 36px rgba(0,0,0,0.7),
+    0 6px 16px rgba(201,43,57,0.08);
+  filter:contrast(1.05) saturate(1.05);
+  transition:transform .9s cubic-bezier(.2,.8,.2,1), opacity .6s ease;
+  opacity:0; /* start hidden until animations fire */
 }
 
-/* more natural shadow on the ground when the rose lands */
+/* Outer volume — large sweeping petals */
+.rose::before{
+  content:"";
+  position:absolute;
+  left:50%; top:38%;
+  width:100%; height:100%;
+  transform:translate(-50%,-38%) rotate(-8deg);
+  border-radius:54% 46% 44% 56% / 68% 68% 32% 32%;
+  background:
+    radial-gradient(circle at 36% 24%, rgba(255,255,255,0.45), transparent 28%),
+    linear-gradient(180deg, rgba(255,120,125,0.9) 0%, rgba(201,43,57,0.95) 48%, var(--rose-red-deep) 100%);
+  box-shadow: inset 0 -12px 24px rgba(0,0,0,0.45), 0 10px 24px rgba(0,0,0,0.45);
+  z-index:4;
+  opacity:0.99;
+  pointer-events:none;
+}
+
+/* Inner bud/core for the tightly packed center */
+.rose::after{
+  content:"";
+  position:absolute;
+  left:50%; top:32%;
+  width:54%; height:54%;
+  transform:translate(-50%,-32%) rotate(6deg);
+  border-radius:50% 50% 46% 54% / 58% 58% 42% 42%;
+  background: radial-gradient(circle at 36% 28%, #ffe9d8 0%, #ffb3b9 8%, transparent 24%),
+              linear-gradient(180deg, rgba(255,110,120,0.95) 0%, var(--rose-red) 48%, var(--rose-red-deep) 100%);
+  box-shadow: inset 0 -6px 12px rgba(0,0,0,0.35);
+  z-index:6;
+  pointer-events:none;
+}
+
+/* soft glossy highlight element inside the rose (add in markup as an empty span if desired) */
+.rose .petal-gloss{ display:block; position:absolute; left:50%; top:8%; transform:translateX(-50%); width:44%; height:22%; border-radius:50%; background:linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.02)); mix-blend-mode:screen; z-index:7; pointer-events:none; }
+
+/* ground shadow that appears when rose settles */
 .rose-ground-shadow{
   position:absolute;
-  bottom:-6px; left:50%; transform:translateX(-50%);
-  width:56%; height:22px; border-radius:50%;
-  background:radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0.55), rgba(0,0,0,0.18) 40%, transparent 70%);
+  bottom:-8px; left:50%; transform:translateX(-50%);
+  width:56%; height:24px; border-radius:50%;
+  background:radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0.5), rgba(0,0,0,0.16) 40%, transparent 70%);
   filter:blur(8px);
-  opacity:0; transition:opacity .5s ease, transform .6s ease;
+  opacity:0; transition:opacity .6s ease, transform .6s ease;
   z-index:2;
 }
 
-/* When the rose falls, it should settle on the ground and remain visible. We override the roseFall keyframes. */
-@keyframes roseFall{
-  0%{ opacity:1; transform:scale(1) translateY(-36vh) rotate(0deg); }
-  40%{ opacity:1; transform:scale(0.98) translateY(-22vh) rotate(8deg); }
-  75%{ opacity:1; transform:scale(0.94) translateY(-6vh) rotate(42deg); }
-  100%{ opacity:1; transform:scale(0.92) translateY(6vh) rotate(80deg); }
+/* ------------------ Animations: grow from stem, bloom, then fall as one piece ------------------ */
+
+/* 1) growFromStem: rose emerges upward out of the stem area (translateY from below, scale from 0). */
+@keyframes growFromStem{
+  0%{ opacity:0; transform:translateY(36vh) scale(0.02) rotate(-6deg); }
+  40%{ opacity:1; transform:translateY(6vh) scale(0.6) rotate(6deg); }
+  70%{ transform:translateY(-6vh) scale(1.06) rotate(-4deg); }
+  100%{ opacity:1; transform:translateY(0) scale(1) rotate(0deg); }
 }
 
-/* Also make glowFall end gentler */
-@keyframes glowFall{
-  0%{ opacity:0.4; transform:scale(1) translateY(-36vh); }
-  100%{ opacity:0.14; transform:scale(0.86) translateY(6vh); }
+/* small breathing/bloom idle after opening */
+@keyframes bloomPulse{
+  0%{ transform:translateY(0) scale(1) rotate(0deg); }
+  50%{ transform:translateY(-.6vh) scale(1.02) rotate(.6deg); }
+  100%{ transform:translateY(0) scale(1) rotate(0deg); }
 }
 
-/* Ensure the .scene.play .rose uses the same animation names (overrides earlier declaration)
-   and keep forwards so the rose remains on the ground. */
+/* fall as one solid object and settle on the ground (forwards keeps final state) */
+@keyframes roseFallSingle{
+  0%{ transform:translateY(0) rotate(0deg) scale(1); }
+  30%{ transform:translateY(8vh) rotate(14deg) scale(0.98); }
+  66%{ transform:translateY(18vh) rotate(46deg) scale(0.96); }
+  100%{ transform:translateY(28vh) rotate(84deg) scale(0.92); }
+}
+
+/* gentle fade of glow while falling */
+@keyframes roseGlowFade{
+  0%{ opacity:0.35; transform:scale(1) translateY(0); }
+  100%{ opacity:0.12; transform:scale(0.86) translateY(28vh); }
+}
+
+/* When the scene plays, use our new animation sequence.  Timing tuned so the rose grows, blooms, idles, then falls as one piece. */
 .scene.play .rose{
-  animation: showRose 1s ease forwards 3.0s, idleSway 4.2s ease-in-out infinite alternate 10.6s, roseFall 4.2s ease-in forwards 12.8s;
-}
-.scene.play .rose-glow{ animation: showRoseGlow 7.6s ease-in forwards 3.0s, glowPulse 3.6s ease-in-out infinite alternate 10.6s, glowFall 4.2s ease-in forwards 12.8s; }
-
-/* Keep fallen petals visible on the ground instead of fading out — redefine petal fall animations */
-@keyframes petalFall1{
-  0%{ opacity:0; transform:translate(0,0) rotate(0deg); }
-  10%{ opacity:0.92; }
-  100%{ opacity:0.62; transform:translate(-38px,46vh) rotate(140deg); }
-}
-@keyframes petalFall2{
-  0%{ opacity:0; transform:translate(0,0) rotate(0deg); }
-  10%{ opacity:0.88; }
-  100%{ opacity:0.58; transform:translate(28px,49vh) rotate(-120deg); }
-}
-@keyframes petalFall3{
-  0%{ opacity:0; transform:translate(0,0) rotate(0deg); }
-  10%{ opacity:0.85; }
-  100%{ opacity:0.55; transform:translate(-10px,44vh) rotate(90deg); }
+  animation: growFromStem 2.6s cubic-bezier(.22,.6,.3,1) forwards 1.6s,
+             bloomPulse 4.4s ease-in-out infinite 5.2s paused; /* pause initially, enable later with JS if desired */
 }
 
-/* Slightly more textured petal appearance when on ground */
-.falling-petal{
-  filter:blur(0.6px) saturate(0.98) contrast(0.98);
-  backface-visibility:hidden;
-}
+/* enable idle bloom after a delay (we keep it paused by default so the rose is stable) */
+.scene.play.rose-idle .rose{ animation-play-state:running; }
 
-.falling-petal--1, .falling-petal--2, .falling-petal--3{ z-index:4; }
+/* show glow and animate fade when falling */
+.scene.play .rose-glow{ animation: roseGlowFade 4.2s ease-in forwards 12.8s; }
 
-/* When the rose is settled, reveal a soft ground shadow and soften the rose edges */
-.scene.play .rose[style], .scene.play .rose{ /* keep selector to ensure specificity */ }
-.scene.play .rose-settled .rose-ground-shadow{ opacity:0.85; transform:translateY(0); }
+/* fall animation applied later in sequence — we keep this defined but not started until the moment we trigger falling */
+.scene.play .rose.falling{ animation: roseFallSingle 4.2s ease-in forwards; }
 
-/* Add a helper class you can toggle from JS: .rose-settled on .scene to make the ground shadow visible */
-.scene.rose-settled .rose-ground-shadow{ opacity:0.85; }
+/* after falling, reveal the ground shadow more strongly */
+.scene.rose-settled .rose-ground-shadow{ opacity:0.85; transform:translateY(0); }
 
-/* Small accessibility: reduce the total movement for smaller viewports */
+/* ensure the .rose element remains visible after fall (overrides earlier rules) */
+.scene.play .rose{ opacity:1 !important; }
+
+/* reduce motion on small viewports */
 @media (max-width:520px){
-  .rose, .rose::before, .rose::after{ width:84px; height:84px; }
+  .rose{ width:84px; height:84px; right:-26px; }
+  @keyframes growFromStem{
+    0%{ transform:translateY(28vh) scale(0.02) rotate(-6deg); }
+    40%{ transform:translateY(4vh) scale(0.6) rotate(6deg); }
+    70%{ transform:translateY(-4vh) scale(1.06) rotate(-4deg); }
+    100%{ transform:translateY(0) scale(1) rotate(0deg); }
+  }
+  @keyframes roseFallSingle{
+    100%{ transform:translateY(20vh) rotate(64deg) scale(0.92); }
+  }
 }
+
+/* Small helper JS note (kept here as comment):
+   - Add class .falling to .rose when you want it to fall (e.g., after final-message or after a timeout)
+   - After animationend for 'roseFallSingle', add .rose-settled to .scene to reveal ground shadow.
+*/

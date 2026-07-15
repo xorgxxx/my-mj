@@ -55,12 +55,6 @@
     if (sliderFill) {
       sliderFill.style.boxShadow = `0 0 ${8 + intensity * 22}px rgba(255,45,67,${0.3 + intensity * 0.45})`;
     }
-    if (sliderCard) {
-      // النبض يتسارع من حوالي 3.4 ثانية عند الصفر إلى نحو 0.7 ثانية عند الاقتراب من ١٠٠٪
-      const speed = (3.4 - intensity * 2.7).toFixed(2);
-      sliderCard.style.setProperty('--pulse-speed', speed + 's');
-      sliderCard.style.setProperty('--pulse-i', (0.12 + intensity * 0.55).toFixed(3));
-    }
   }
 
   function startDrag() {

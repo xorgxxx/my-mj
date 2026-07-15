@@ -43,46 +43,6 @@ html,body{
   overflow-x:hidden;
 }
 
-/* ---------- طبقة نفسية مشتركة: حبيبات فيلم + نبض خافت، تُطبَّق على المشاهد الثلاثة ---------- */
-
-.screen::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  z-index:20;
-  pointer-events:none;
-  opacity:0.05;
-  mix-blend-mode:overlay;
-  background-image:
-    repeating-conic-gradient(rgba(255,255,255,0.4) 0% 0.25%, transparent 0% 0.5%);
-  background-size:3px 3px;
-  animation:grainShift 0.5s steps(4) infinite;
-}
-
-@keyframes grainShift{
-  0%{ transform:translate(0,0); }
-  25%{ transform:translate(-1px,1px); }
-  50%{ transform:translate(1px,-1px); }
-  75%{ transform:translate(-1px,-1px); }
-  100%{ transform:translate(0,0); }
-}
-
-/* نبض أحمر خافت جداً على حواف كل مشهد — كأن للموقع نبضاً هادئاً ومقلقاً بلطف */
-.screen::after{
-  content:'';
-  position:absolute;
-  inset:0;
-  z-index:19;
-  pointer-events:none;
-  background:radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(122,15,28,0.22) 100%);
-  opacity:0.5;
-  animation:psychPulse 4.2s ease-in-out infinite;
-}
-@keyframes psychPulse{
-  0%,100%{ opacity:0.35; }
-  50%{ opacity:0.65; }
-}
-
 .screen{
   position:fixed;
   inset:0;
@@ -201,21 +161,12 @@ html,body{
   box-shadow:0 20px 50px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05);
   border:1px solid var(--q-card-border);
   z-index:1;
-  animation:
-    cardReveal 1.4s cubic-bezier(.22,.61,.36,1) both .2s,
-    cardHeartbeat var(--pulse-speed, 3.4s) ease-in-out infinite .3s;
+  animation:cardReveal 1.4s cubic-bezier(.22,.61,.36,1) both .2s;
   transition:box-shadow .6s ease, border-color .6s ease;
 }
 @keyframes cardReveal{
   from{ opacity:0; transform:translateY(20px) scale(0.97); filter:blur(8px); }
   to{ opacity:1; transform:translateY(0) scale(1); filter:blur(0); }
-}
-/* نبض يشبه دقات القلب — يتسارع تلقائياً كلما اقترب المؤشر من ١٠٠٪ عبر --pulse-speed */
-@keyframes cardHeartbeat{
-  0%, 100%{ box-shadow:0 20px 50px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 0 rgba(255,45,67,0); }
-  14%{ box-shadow:0 20px 50px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 26px rgba(255,45,67,var(--pulse-i,0.15)); }
-  28%{ box-shadow:0 20px 50px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 4px rgba(255,45,67,0); }
-  38%{ box-shadow:0 20px 50px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 20px rgba(255,45,67,var(--pulse-i,0.15)); }
 }
 
 .slider-wrap{
@@ -443,40 +394,6 @@ html,body{
   overflow:hidden;
 }
 
-/* نسيج قماش لوحة خافت جداً خلف المشهد بالكامل — يعزز فكرة أن الوردة "لوحة" يتم تركيبها */
-.canvas-texture{
-  position:absolute;
-  inset:0;
-  z-index:0;
-  opacity:0;
-  pointer-events:none;
-  background-image:
-    repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0px, transparent 1px, transparent 3px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, transparent 1px, transparent 3px);
-  transition:opacity 2s ease;
-}
-.scene.play .canvas-texture{
-  opacity:1;
-  transition-delay:2s;
-}
-
-/* إطار لوحة خافت جداً يظهر مع اكتمال التفتح — كأن العمل الفني اكتمل داخل إطاره */
-.canvas-frame{
-  position:absolute;
-  inset:6%;
-  border:1px solid rgba(255,120,130,0.0);
-  border-radius:2px;
-  z-index:7;
-  pointer-events:none;
-  box-shadow:0 0 0 0 rgba(255,45,67,0);
-  transition:border-color 2s ease, box-shadow 2s ease;
-}
-.scene.play .canvas-frame{
-  border-color:rgba(255,120,130,0.09);
-  box-shadow:inset 0 0 60px rgba(255,45,67,0.06), 0 0 40px rgba(255,45,67,0.05);
-  transition-delay:9.6s;
-}
-
 /* تظليل حواف الشاشة لتركيز الانتباه على المركز، مع عمق ميداني ناعم */
 .vignette{
   position:absolute;
@@ -486,8 +403,10 @@ html,body{
   z-index:5;
 }
 
-/* غبار عائم خفيف جداً — Floating Dust بدون مبالغة (عناصر حقيقية بدلاً من ::before/::after المحجوزة للطبقة النفسية العامة) */
-.scene-dust{
+/* غبار عائم خفيف جداً — Floating Dust بدون مبالغة */
+.scene::before,
+.scene::after{
+  content:'';
   position:absolute;
   width:2.5px;
   height:2.5px;
@@ -498,12 +417,12 @@ html,body{
   pointer-events:none;
   z-index:2;
 }
-.scene-dust--a{
+.scene::before{
   top:35%;
   left:38%;
   animation:sceneDust 11s ease-in-out infinite 4s;
 }
-.scene-dust--b{
+.scene::after{
   top:55%;
   left:62%;
   animation:sceneDust 13s ease-in-out infinite 6.5s;
@@ -650,7 +569,7 @@ html,body{
   z-index:3;
 }
 
-/* كأس الزهرة الأخضر خلف البتلات — تصل كأنها قطعة تطير من الخارج وتستقر في مكانها */
+/* كأس الزهرة الأخضر خلف البتلات */
 .sepal{
   position:absolute;
   width:26px;
@@ -663,13 +582,12 @@ html,body{
   transform-origin:50% 100%;
   opacity:0;
   z-index:0;
-  filter:brightness(1);
 }
-.sepal--1{ --r:20deg; --fx:-120px; --fy:-60px; --frot:-70deg; }
-.sepal--2{ --r:140deg; --fx:130px; --fy:-40px; --frot:80deg; }
-.sepal--3{ --r:260deg; --fx:-20px; --fy:110px; --frot:120deg; }
+.sepal--1{ transform:rotate(20deg) scale(0.2); }
+.sepal--2{ transform:rotate(140deg) scale(0.2); }
+.sepal--3{ transform:rotate(260deg) scale(0.2); }
 
-/* بتلات بثلاث طبقات: خارجية داكنة، وسطى، وداخلية فاتحة متوهجة — كل بتلة قطعة فنية منفصلة تطير وتستقر */
+/* بتلات بثلاث طبقات: خارجية داكنة، وسطى، وداخلية فاتحة متوهجة */
 .petal{
   position:absolute;
   top:50%;
@@ -677,11 +595,7 @@ html,body{
   opacity:0;
   transform-origin:50% 100%;
   border-radius:50% 50% 50% 50% / 68% 68% 32% 32%;
-  transform:
-    translate(var(--fx,0px), var(--fy,0px))
-    rotate(calc(var(--rot,0deg) + var(--frot,0deg)))
-    scale(0.15);
-  filter:brightness(1) drop-shadow(0 0 0 rgba(255,255,255,0));
+  transform:rotate(var(--rot,0deg)) scale(0.08);
 }
 
 .petal-outer{
@@ -689,9 +603,10 @@ html,body{
   height:64px;
   margin:-58px 0 0 -23px;
   background:
-    radial-gradient(ellipse at 50% 20%, rgba(255,255,255,0.25), transparent 45%),
-    linear-gradient(180deg, #ff4f61 0%, var(--rose) 45%, #7a0f1c 100%);
-  box-shadow:inset 0 -10px 16px rgba(0,0,0,0.45), inset 0 6px 10px rgba(255,255,255,0.08);
+    radial-gradient(ellipse at 42% 16%, rgba(255,255,255,0.3), transparent 40%),
+    radial-gradient(ellipse at 65% 30%, rgba(255,150,140,0.18), transparent 55%),
+    linear-gradient(165deg, #ff4f61 0%, var(--rose) 45%, #6b0d18 100%);
+  box-shadow:inset 0 -10px 16px rgba(0,0,0,0.45), inset 0 6px 10px rgba(255,255,255,0.08), 0 6px 12px rgba(0,0,0,0.3);
   z-index:1;
 }
 .petal-mid{
@@ -699,9 +614,10 @@ html,body{
   height:52px;
   margin:-49px 0 0 -19px;
   background:
-    radial-gradient(ellipse at 50% 18%, rgba(255,255,255,0.35), transparent 50%),
-    linear-gradient(180deg, #ff7a86 0%, #f13a52 50%, var(--rose-dark) 100%);
-  box-shadow:inset 0 -8px 12px rgba(0,0,0,0.35), inset 0 5px 8px rgba(255,255,255,0.12);
+    radial-gradient(ellipse at 42% 15%, rgba(255,255,255,0.4), transparent 45%),
+    radial-gradient(ellipse at 68% 28%, rgba(255,170,160,0.2), transparent 55%),
+    linear-gradient(165deg, #ff7a86 0%, #f13a52 50%, var(--rose-dark) 100%);
+  box-shadow:inset 0 -8px 12px rgba(0,0,0,0.35), inset 0 5px 8px rgba(255,255,255,0.12), 0 4px 9px rgba(0,0,0,0.25);
   z-index:2;
 }
 .petal-inner{
@@ -715,24 +631,23 @@ html,body{
   z-index:3;
 }
 
-/* كل بتلة لها زاوية استقرار (--rot) ونقطة انطلاق عشوائية (--fx / --fy / --frot) — كأنها قطع لوحة تتطاير من الإطار وتلتحم في مكانها */
-.petal-outer.petal--1{ --rot:-38deg; --fx:-260px; --fy:-140px; --frot:-160deg; }
-.petal-outer.petal--2{ --rot:22deg;  --fx:240px;  --fy:-170px; --frot:150deg; }
-.petal-outer.petal--3{ --rot:82deg;  --fx:280px;  --fy:60px;   --frot:-140deg; }
-.petal-outer.petal--4{ --rot:142deg; --fx:180px;  --fy:220px;  --frot:170deg; }
-.petal-outer.petal--5{ --rot:202deg; --fx:-220px; --fy:200px;  --frot:-130deg; }
-.petal-outer.petal--6{ --rot:262deg; --fx:-280px; --fy:20px;   --frot:160deg; }
+.petal-outer.petal--1{ --rot:-38deg; }
+.petal-outer.petal--2{ --rot:22deg; }
+.petal-outer.petal--3{ --rot:82deg; }
+.petal-outer.petal--4{ --rot:142deg; }
+.petal-outer.petal--5{ --rot:202deg; }
+.petal-outer.petal--6{ --rot:262deg; }
 
-.petal-mid.petal--1{ --rot:0deg;   --fx:0px;    --fy:-180px; --frot:100deg; }
-.petal-mid.petal--2{ --rot:72deg;  --fx:170px;  --fy:-90px;  --frot:-110deg; }
-.petal-mid.petal--3{ --rot:144deg; --fx:150px;  --fy:140px;  --frot:130deg; }
-.petal-mid.petal--4{ --rot:216deg; --fx:-160px; --fy:130px;  --frot:-120deg; }
-.petal-mid.petal--5{ --rot:288deg; --fx:-170px; --fy:-80px;  --frot:110deg; }
+.petal-mid.petal--1{ --rot:0deg; }
+.petal-mid.petal--2{ --rot:72deg; }
+.petal-mid.petal--3{ --rot:144deg; }
+.petal-mid.petal--4{ --rot:216deg; }
+.petal-mid.petal--5{ --rot:288deg; }
 
-.petal-inner.petal--1{ --rot:15deg;  --fx:70px;  --fy:-110px; --frot:-90deg; }
-.petal-inner.petal--2{ --rot:105deg; --fx:110px; --fy:70px;   --frot:95deg; }
-.petal-inner.petal--3{ --rot:195deg; --fx:-90px; --fy:90px;   --frot:-95deg; }
-.petal-inner.petal--4{ --rot:285deg; --fx:-100px;--fy:-80px;  --frot:90deg; }
+.petal-inner.petal--1{ --rot:15deg; }
+.petal-inner.petal--2{ --rot:105deg; }
+.petal-inner.petal--3{ --rot:195deg; }
+.petal-inner.petal--4{ --rot:285deg; }
 
 .bud-center{
   position:absolute;
@@ -748,31 +663,29 @@ html,body{
   box-shadow:0 0 10px rgba(255,45,67,0.8);
 }
 
-/* ومضة التحام قصيرة تظهر لحظة استقرار كل قطعة في مكانها، كأن اللوحة تُثبَّت جزءاً فجزءاً */
-.piece-flash{
-  position:absolute;
-  inset:-6px;
-  border-radius:inherit;
-  background:radial-gradient(ellipse at 50% 40%, rgba(255,255,255,0.9), rgba(255,90,107,0.4) 45%, transparent 75%);
-  opacity:0;
-  pointer-events:none;
-  mix-blend-mode:screen;
-  z-index:5;
-}
-
 .final-message{
   position:absolute;
   bottom:6vh;
-  font-size:clamp(20px,3.5vw,30px);
-  font-weight:700;
+  font-size:clamp(28px,6vw,46px);
+  font-weight:900;
   font-style:italic;
   letter-spacing:0.5px;
-  max-width:90vw;
+  max-width:92vw;
   color:#ffe4e6;
-  text-shadow:0 0 18px rgba(255,45,67,0.65), 0 2px 6px rgba(0,0,0,0.6);
+  text-shadow:0 0 26px rgba(255,45,67,0.7), 0 2px 8px rgba(0,0,0,0.65);
   opacity:0;
   filter:blur(10px);
   z-index:6;
+}
+
+/* إظلام كامل يبتلع المشهد ببطء شديد بعد ذبول الوردة، كخاتمة موجعة */
+.scene-fade{
+  position:absolute;
+  inset:0;
+  background:#000;
+  opacity:0;
+  z-index:7;
+  pointer-events:none;
 }
 
 /* ---------- تشغيل الحركات عند إضافة كلاس play ---------- */
@@ -793,8 +706,8 @@ html,body{
 .scene.play .leaf--l2{ animation:growLeaf 1s ease forwards 2.2s; }
 .scene.play .leaf--r2{ animation:growLeaf 1s ease forwards 2.5s; }
 
-.scene.play .rose{ animation:showRose 1s ease forwards 3.0s; }
-.scene.play .rose-glow{ animation:showRoseGlow 1.2s ease forwards 3.0s; }
+.scene.play .rose{ animation:showRose 1s ease forwards 3.0s, idleSway 4.2s ease-in-out infinite alternate 10.6s, roseFall 7s ease-in forwards 14s; }
+.scene.play .rose-glow{ animation:showRoseGlow 7.6s ease-in forwards 3.0s, glowPulse 3.6s ease-in-out infinite alternate 10.6s, glowFall 7s ease-in forwards 14s; }
 
 .scene.play .sepal--1{ animation:openSepal 0.8s ease forwards 3.1s; }
 .scene.play .sepal--2{ animation:openSepal 0.8s ease forwards 3.2s; }
@@ -803,55 +716,46 @@ html,body{
 .scene.play .bud-center{ animation:fadeScale 0.6s ease forwards 3.4s; }
 
 /* تفتح البتلات الداخلية أولاً، ثم الوسطى، ثم الخارجية — بطيء وتدريجي (~ 8-12 ثانية إجمالاً) */
-.scene.play .petal-inner.petal--1{ animation:bloom 2.2s ease-in-out forwards 3.6s; }
-.scene.play .petal-inner.petal--2{ animation:bloom 2.2s ease-in-out forwards 3.85s; }
-.scene.play .petal-inner.petal--3{ animation:bloom 2.2s ease-in-out forwards 4.1s; }
-.scene.play .petal-inner.petal--4{ animation:bloom 2.2s ease-in-out forwards 4.35s; }
 
-.scene.play .petal-mid.petal--1{ animation:bloom 2.4s ease-in-out forwards 4.8s; }
-.scene.play .petal-mid.petal--2{ animation:bloom 2.4s ease-in-out forwards 5.05s; }
-.scene.play .petal-mid.petal--3{ animation:bloom 2.4s ease-in-out forwards 5.3s; }
-.scene.play .petal-mid.petal--4{ animation:bloom 2.4s ease-in-out forwards 5.55s; }
-.scene.play .petal-mid.petal--5{ animation:bloom 2.4s ease-in-out forwards 5.8s; }
 
-.scene.play .petal-outer.petal--1{ animation:bloom 2.6s ease-in-out forwards 6.3s; }
-.scene.play .petal-outer.petal--2{ animation:bloom 2.6s ease-in-out forwards 6.6s; }
-.scene.play .petal-outer.petal--3{ animation:bloom 2.6s ease-in-out forwards 6.9s; }
-.scene.play .petal-outer.petal--4{ animation:bloom 2.6s ease-in-out forwards 7.2s; }
-.scene.play .petal-outer.petal--5{ animation:bloom 2.6s ease-in-out forwards 7.5s; }
-.scene.play .petal-outer.petal--6{ animation:bloom 2.6s ease-in-out forwards 7.8s; }
-
-/* ومضات الالتحام — كل قطعة تضيء للحظة عندما تستقر في مكانها، كأن اللوحة تُختم جزءاً فجزءاً */
-.scene.play .sepal--1 .piece-flash{ animation:pieceLockFlash 0.7s ease forwards 3.55s; }
-.scene.play .sepal--2 .piece-flash{ animation:pieceLockFlash 0.7s ease forwards 3.65s; }
-.scene.play .sepal--3 .piece-flash{ animation:pieceLockFlash 0.7s ease forwards 3.75s; }
-
-.scene.play .petal-inner.petal--1 .piece-flash{ animation:pieceLockFlash 0.8s ease forwards 4.9s; }
-.scene.play .petal-inner.petal--2 .piece-flash{ animation:pieceLockFlash 0.8s ease forwards 5.15s; }
-.scene.play .petal-inner.petal--3 .piece-flash{ animation:pieceLockFlash 0.8s ease forwards 5.4s; }
-.scene.play .petal-inner.petal--4 .piece-flash{ animation:pieceLockFlash 0.8s ease forwards 5.65s; }
-
-.scene.play .petal-mid.petal--1 .piece-flash{ animation:pieceLockFlash 0.8s ease forwards 6.4s; }
-.scene.play .petal-mid.petal--2 .piece-flash{ animation:pieceLockFlash 0.8s ease forwards 6.65s; }
-.scene.play .petal-mid.petal--3 .piece-flash{ animation:pieceLockFlash 0.8s ease forwards 6.9s; }
-.scene.play .petal-mid.petal--4 .piece-flash{ animation:pieceLockFlash 0.8s ease forwards 7.15s; }
-.scene.play .petal-mid.petal--5 .piece-flash{ animation:pieceLockFlash 0.8s ease forwards 7.4s; }
-
-.scene.play .petal-outer.petal--1 .piece-flash{ animation:pieceLockFlash 0.9s ease forwards 8.06s; }
-.scene.play .petal-outer.petal--2 .piece-flash{ animation:pieceLockFlash 0.9s ease forwards 8.36s; }
-.scene.play .petal-outer.petal--3 .piece-flash{ animation:pieceLockFlash 0.9s ease forwards 8.66s; }
-.scene.play .petal-outer.petal--4 .piece-flash{ animation:pieceLockFlash 0.9s ease forwards 8.96s; }
-.scene.play .petal-outer.petal--5 .piece-flash{ animation:pieceLockFlash 0.9s ease forwards 9.26s; }
-.scene.play .petal-outer.petal--6 .piece-flash{ animation:pieceLockFlash 0.9s ease forwards 9.56s; }
-
-/* التوهج الأحمر يزداد تدريجيًا مع كل مرحلة من التفتح ويكتمل عند اكتمال الوردة (~10.4s) */
-.scene.play .ambient-glow{ animation:ambientGlowUp 7s ease-in-out forwards 3.4s; }
-.scene.play .ground-glow{ animation:groundGlowUp 7s ease-in-out forwards 3.4s; }
+/* التوهج الأحمر يزداد تدريجيًا وبخطوات ناعمة جداً مع كل مرحلة من التفتح ويكتمل عند اكتمال الوردة (~10.4s) */
+.scene.play .ambient-glow{ animation:ambientGlowUp 8s cubic-bezier(.2,.6,.3,1) forwards 3.0s, ambientGlowDeepen 6s ease-in forwards 15s; }
+.scene.play .ground-glow{ animation:groundGlowUp 8s cubic-bezier(.2,.6,.3,1) forwards 3.0s, groundGlowDeepen 6s ease-in forwards 15s; }
 
 /* النص النهائي يظهر بعد ثانية من اكتمال التفتح (~10.4s + 1s) */
 .scene.play .final-message{
   animation:fadeUpBlur 1.8s ease forwards 11.4s;
 }
+
+/* ذبول الوردة وسقوطها ببطء شديد بعد ظهور النص، ثم إظلام المشهد بالكامل كنهاية مؤثرة */
+.scene.play .stem{ animation:growStem 2.4s cubic-bezier(.34,1.2,.4,1) forwards .1s, stemWilt 7s ease-in forwards 14s; }
+.scene.play .leaf--l1{ animation:growLeaf 1s ease forwards 1.6s, leafWilt 5s ease-in forwards 15s; }
+.scene.play .leaf--r1{ animation:growLeaf 1s ease forwards 1.9s, leafWilt 5s ease-in forwards 15.3s; }
+.scene.play .leaf--l2{ animation:growLeaf 1s ease forwards 2.2s, leafWilt 5s ease-in forwards 15.6s; }
+.scene.play .leaf--r2{ animation:growLeaf 1s ease forwards 2.5s, leafWilt 5s ease-in forwards 15.9s; }
+
+.scene.play .petal-inner{ animation-name:bloom, petalWilt; animation-duration:2.2s, 6s; animation-timing-function:ease-in-out, ease-in; animation-fill-mode:forwards, forwards; }
+.scene.play .petal-inner.petal--1{ animation-delay:3.6s, 14.2s; }
+.scene.play .petal-inner.petal--2{ animation-delay:3.85s, 14.4s; }
+.scene.play .petal-inner.petal--3{ animation-delay:4.1s, 14.6s; }
+.scene.play .petal-inner.petal--4{ animation-delay:4.35s, 14.8s; }
+
+.scene.play .petal-mid{ animation-name:bloom, petalWilt; animation-duration:2.4s, 6s; animation-timing-function:ease-in-out, ease-in; animation-fill-mode:forwards, forwards; }
+.scene.play .petal-mid.petal--1{ animation-delay:4.8s, 14.3s; }
+.scene.play .petal-mid.petal--2{ animation-delay:5.05s, 14.5s; }
+.scene.play .petal-mid.petal--3{ animation-delay:5.3s, 14.7s; }
+.scene.play .petal-mid.petal--4{ animation-delay:5.55s, 14.9s; }
+.scene.play .petal-mid.petal--5{ animation-delay:5.8s, 15.1s; }
+
+.scene.play .petal-outer{ animation-name:bloom, petalWilt; animation-duration:2.6s, 6s; animation-timing-function:ease-in-out, ease-in; animation-fill-mode:forwards, forwards; }
+.scene.play .petal-outer.petal--1{ animation-delay:6.3s, 14.4s; }
+.scene.play .petal-outer.petal--2{ animation-delay:6.6s, 14.6s; }
+.scene.play .petal-outer.petal--3{ animation-delay:6.9s, 14.8s; }
+.scene.play .petal-outer.petal--4{ animation-delay:7.2s, 15.0s; }
+.scene.play .petal-outer.petal--5{ animation-delay:7.5s, 15.2s; }
+.scene.play .petal-outer.petal--6{ animation-delay:7.8s, 15.4s; }
+
+.scene.play .scene-fade{ animation:sceneFadeIn 6s ease-in forwards 19s; }
 
 @keyframes growStem{
   from{ height:0; }
@@ -878,69 +782,78 @@ html,body{
   100%{ opacity:0.35; transform:scale(1) translateY(-36vh); }
 }
 @keyframes openSepal{
-  0%{
-    opacity:0;
-    transform:translate(var(--fx,0px), var(--fy,0px)) rotate(calc(var(--r,0deg) + var(--frot,0deg))) scale(0.25);
-    filter:brightness(2.2);
-  }
-  55%{
-    opacity:1;
-    transform:translate(calc(var(--fx,0px) * 0.06), calc(var(--fy,0px) * 0.06)) rotate(calc(var(--r,0deg) - 6deg)) scale(1.08);
-    filter:brightness(1.5);
-  }
-  100%{
-    opacity:1;
-    transform:translate(0,0) rotate(var(--r,0deg)) scale(1);
-    filter:brightness(1);
-  }
+  from{ opacity:0; transform:rotate(var(--r,0deg)) scale(0.2); }
+  to{ opacity:1; transform:rotate(var(--r,0deg)) scale(1); }
 }
+.sepal--1{ --r:20deg; }
+.sepal--2{ --r:140deg; }
+.sepal--3{ --r:260deg; }
 @keyframes fadeScale{
   from{ opacity:0; transform:scale(0); }
   to{ opacity:1; transform:scale(1); }
 }
-/* كل بتلة "تطير" من نقطتها العشوائية ككأنها قطعة لوحة ممزقة، تتباطأ، تهتز قليلاً عند الاستقرار، ثم تلتحم بومضة خفيفة */
-@keyframes bloom{
-  0%{
-    opacity:0;
-    transform:
-      translate(var(--fx,0px), var(--fy,0px))
-      rotate(calc(var(--rot,0deg) + var(--frot,0deg)))
-      scale(0.15);
-    filter:brightness(2.4) saturate(0.6);
-  }
-  38%{
-    opacity:0.9;
-    transform:
-      translate(calc(var(--fx,0px) * 0.28), calc(var(--fy,0px) * 0.28))
-      rotate(calc(var(--rot,0deg) + var(--frot,0deg) * 0.22))
-      scale(0.7);
-    filter:brightness(1.8) saturate(0.8);
-  }
-  68%{
-    opacity:1;
-    transform:
-      translate(calc(var(--fx,0px) * 0.04), calc(var(--fy,0px) * 0.04))
-      rotate(calc(var(--rot,0deg) - 4deg))
-      scale(1.1);
-    filter:brightness(1.3) saturate(1);
-  }
-  84%{
-    transform:translate(0,0) rotate(calc(var(--rot,0deg) + 2deg)) scale(0.97);
-    filter:brightness(1.05);
-  }
-  100%{
-    opacity:1;
-    transform:translate(0,0) rotate(var(--rot,0deg)) scale(1);
-    filter:brightness(1) saturate(1);
-  }
+/* الوردة بعد اكتمال تفتحها لا تتجمد؛ تتنفس وتتمايل بلطف شديد كلوحة حية */
+@keyframes idleSway{
+  0%{ transform:scale(1) translateY(-36vh) rotate(-1deg); }
+  100%{ transform:scale(1.018) translateY(-36.6vh) rotate(1deg); }
+}
+@keyframes glowPulse{
+  0%{ opacity:0.38; }
+  100%{ opacity:0.56; }
 }
 
-/* ومضة الالتحام: تظهر بإيجاز عند لحظة استقرار كل قطعة */
-@keyframes pieceLockFlash{
+@keyframes bloom{
+  0%{ opacity:0; border-radius:50% 50% 50% 50% / 92% 92% 8% 8%; transform:rotate(var(--rot)) scale(0.1) translateY(4px); }
+  35%{ opacity:0.8; border-radius:58% 58% 42% 42% / 82% 82% 18% 18%; transform:rotate(var(--rot)) scale(0.55) translateY(0); }
+  60%{ opacity:1; border-radius:64% 64% 36% 36% / 74% 74% 26% 26%; transform:rotate(var(--rot)) scale(0.9) translateY(-2px); }
+  82%{ border-radius:50% 50% 50% 50% / 70% 70% 30% 30%; transform:rotate(var(--rot)) scale(1.06) translateY(-1px); }
+  100%{ opacity:1; border-radius:50% 50% 50% 50% / 68% 68% 32% 32%; transform:rotate(var(--rot)) scale(1) translateY(0); }
+}
+
+/* ذبول الوردة: البتلات تنطوي للداخل وتغمق ألوانها ببطء شديد */
+@keyframes petalWilt{
+  0%{ opacity:1; filter:brightness(1) saturate(1); transform:rotate(var(--rot)) scale(1) translateY(0); }
+  45%{ opacity:0.9; filter:brightness(0.75) saturate(0.85); transform:rotate(calc(var(--rot) + 4deg)) scale(0.93) translateY(3px); }
+  100%{ opacity:0.35; filter:brightness(0.35) saturate(0.55); transform:rotate(calc(var(--rot) + 10deg)) scale(0.8) translateY(10px); }
+}
+
+/* الساق تنحني ببطء تحت ثقل الوردة الذابلة */
+@keyframes stemWilt{
+  0%{ transform:rotate(0deg); }
+  100%{ transform:rotate(22deg); }
+}
+
+/* الأوراق تذبل وتغمق مع الساق */
+@keyframes leafWilt{
+  0%{ opacity:1; filter:brightness(1); }
+  100%{ opacity:0.45; filter:brightness(0.4); transform:scale(0.82) rotate(-22deg); }
+}
+
+/* رأس الوردة كله يسقط ببطء شديد، شويًا شويًا */
+@keyframes roseFall{
+  0%{ opacity:1; transform:scale(1) translateY(-36vh) rotate(0deg); }
+  50%{ opacity:1; transform:scale(0.96) translateY(-31vh) rotate(16deg); }
+  100%{ opacity:0.9; transform:scale(0.88) translateY(-21vh) rotate(30deg); }
+}
+@keyframes glowFall{
+  0%{ opacity:0.4; transform:scale(1) translateY(-36vh); }
+  100%{ opacity:0.1; transform:scale(0.8) translateY(-21vh); }
+}
+
+/* اكتمال الإظلام مع ذبول الوردة، ليغرق المشهد كله في العتمة */
+@keyframes ambientGlowDeepen{
+  0%{ opacity:1; }
+  100%{ opacity:0.25; }
+}
+@keyframes groundGlowDeepen{
+  0%{ opacity:0.85; }
+  100%{ opacity:0.15; }
+}
+
+/* إظلام كامل وبطيء جداً للمشهد بأكمله، كخاتمة موجعة */
+@keyframes sceneFadeIn{
   0%{ opacity:0; }
-  8%{ opacity:0.85; }
-  30%{ opacity:0; }
-  100%{ opacity:0; }
+  100%{ opacity:1; }
 }
 @keyframes ambientGlowUp{
   0%{ opacity:0; }
@@ -1044,14 +957,7 @@ html,body{
   opacity:0;
   z-index:6;
   text-shadow:0 2px 10px rgba(0,0,0,0.6);
-  animation:fadeInMessage 1.3s ease forwards 0.1s, msgFlicker 6s ease-in-out infinite 1.5s;
-}
-@keyframes msgFlicker{
-  0%,92%,100%{ opacity:1; }
-  93%{ opacity:0.75; }
-  94%{ opacity:1; }
-  95%{ opacity:0.6; }
-  96%{ opacity:1; }
+  animation:fadeInMessage 1.3s ease forwards 0.1s;
 }
 @keyframes fadeIn{
   from{ opacity:0; }
@@ -1108,6 +1014,59 @@ html,body{
 @keyframes fogFadeIn{
   from{ opacity:0; }
   to{ opacity:1; }
+}
+
+/* قلب يظهر ثم ينبض ببطء، وبعدها يتصدع شويًا شويًا حتى ينكسر إلى نصفين */
+.fail-heart{
+  position:absolute;
+  top:20%;
+  left:50%;
+  width:130px;
+  margin-left:-65px;
+  z-index:4;
+  opacity:0;
+  filter:drop-shadow(0 0 20px rgba(255,40,60,0.4));
+  animation:
+    heartFadeIn 1.4s ease forwards 0.3s,
+    heartbeat 1.8s ease-in-out 2 1.5s;
+}
+.fail-heart-svg{ width:100%; height:auto; overflow:visible; display:block; }
+@keyframes heartFadeIn{
+  from{ opacity:0; transform:scale(0.8); }
+  to{ opacity:1; transform:scale(1); }
+}
+@keyframes heartbeat{
+  0%,100%{ transform:scale(1); }
+  15%{ transform:scale(1.08); }
+  30%{ transform:scale(1); }
+  45%{ transform:scale(1.05); }
+  60%{ transform:scale(1); }
+}
+
+.fail-heart-crack{
+  stroke-dasharray:100;
+  stroke-dashoffset:100;
+  animation:crackDraw 3.6s ease-in forwards 3.4s;
+}
+@keyframes crackDraw{
+  to{ stroke-dashoffset:0; }
+}
+
+.fail-heart-left{
+  transform-origin:50% 100%;
+  animation:heartBreakLeft 2.6s ease-in forwards 6.4s;
+}
+.fail-heart-right{
+  transform-origin:50% 100%;
+  animation:heartBreakRight 2.6s ease-in forwards 6.4s;
+}
+@keyframes heartBreakLeft{
+  0%{ transform:translate(0,0) rotate(0deg); opacity:1; }
+  100%{ transform:translate(-16px,30px) rotate(-16deg); opacity:0.2; }
+}
+@keyframes heartBreakRight{
+  0%{ transform:translate(0,0) rotate(0deg); opacity:1; }
+  100%{ transform:translate(16px,34px) rotate(17deg); opacity:0.2; }
 }
 
 /* الكيان الغامض: كتلة دخان وظلال بلا ملامح، تقترب ببطء من الأفق البعيد */
@@ -1176,7 +1135,6 @@ html,body{
 .fail-scene.active .fail-message{
   animation:
     fadeInMessage 1.3s ease forwards 0.1s,
-    msgFlicker 6s ease-in-out infinite 1.5s,
     fadeOutMessage 1.8s ease forwards 7s;
 }
 @keyframes fadeOutMessage{
@@ -1187,7 +1145,7 @@ html,body{
 
 @media (max-width:480px){
   .slider-card{ padding:24px 18px 18px; }
-  .final-message{ font-size:16px; padding:10px 18px; }
+  .final-message{ font-size:24px; padding:10px 18px; }
   .btn-row{ flex-direction:column; width:100%; }
   .btn-row button{ width:100%; }
   .notice-card{ padding:26px 20px; }

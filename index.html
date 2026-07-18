@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>كم تحب الأناناس؟ 🍍</title>
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="style.rose-enhancements.css">
 </head>
 <body>
 
@@ -74,48 +73,98 @@
       <div class="leaf leaf--l2"><span class="leaf-vein"></span></div>
       <div class="leaf leaf--r2"><span class="leaf-vein"></span></div>
 
-      <!-- Replaced old CSS-built rose with SVG component -->
-      <!-- components/rose.html content inserted here -->
-      <div id="rose-svg-container">
-        <svg id="rose-svg" viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <div class="rose">
+        <svg class="rose-svg" viewBox="0 0 200 200" aria-hidden="true">
           <defs>
-            <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="4" result="blur"/>
-              <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.45 0"/>
+            <radialGradient id="coreGlowGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ff4a57" stop-opacity="0.95"/>
+              <stop offset="55%" stop-color="#ff2d43" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#ff2d43" stop-opacity="0"/>
+            </radialGradient>
+            <filter id="glowBlur" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="16"/>
             </filter>
+            <filter id="petalShadow" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="2.4" stdDeviation="2.1" flood-color="#3a0509" flood-opacity="0.4"/>
+            </filter>
+            <radialGradient id="gradSepal" cx="38%" cy="18%" r="85%">
+              <stop offset="0%" stop-color="#5fbf6a"/>
+              <stop offset="100%" stop-color="#1f4f24"/>
+            </radialGradient>
+            <radialGradient id="gradOuter" cx="35%" cy="20%" r="82%">
+              <stop offset="0%" stop-color="#ff6b78"/>
+              <stop offset="55%" stop-color="#e63950"/>
+              <stop offset="100%" stop-color="#5e0c15"/>
+            </radialGradient>
+            <radialGradient id="gradMid" cx="37%" cy="20%" r="80%">
+              <stop offset="0%" stop-color="#ff8f92"/>
+              <stop offset="55%" stop-color="#f13a52"/>
+              <stop offset="100%" stop-color="#831422"/>
+            </radialGradient>
+            <radialGradient id="gradInner" cx="40%" cy="22%" r="78%">
+              <stop offset="0%" stop-color="#ffb9b2"/>
+              <stop offset="55%" stop-color="#ff5b62"/>
+              <stop offset="100%" stop-color="#9c1727"/>
+            </radialGradient>
+            <radialGradient id="gradBud" cx="42%" cy="24%" r="76%">
+              <stop offset="0%" stop-color="#ffd8cd"/>
+              <stop offset="55%" stop-color="#ff7263"/>
+              <stop offset="100%" stop-color="#ad1e20"/>
+            </radialGradient>
           </defs>
 
-          <!-- shadow (hidden until settle) -->
-          <ellipse id="roseShadow" class="rose-svg-shadow" cx="100" cy="240" rx="48" ry="14" fill="rgba(0,0,0,0.45)" style="opacity:0; filter:url(#softShadow)"/>
+          <circle class="rose-core-glow" cx="100" cy="100" r="80" fill="url(#coreGlowGrad)" filter="url(#glowBlur)"/>
 
-          <!-- group to move as one object -->
-          <g id="roseGroup" transform="translate(0,0)">
-            <!-- stem path (drawn from bottom up) -->
-            <path id="stemPath" d="M100 260 C100 220 98 160 108 120" stroke="#2f6b3a" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <g class="ring ring-sepal" filter="url(#petalShadow)">
+            <path d="M0,0 C-10,-4 -16,-15 -14,-25 C-13,-32 -7,-37 0,-39 C7,-37 13,-32 14,-25 C16,-15 10,-4 0,0 Z" transform="translate(100,100) rotate(-90) scale(1.35)" fill="url(#gradSepal)"/>
+            <path d="M0,0 C-10,-4 -16,-15 -14,-25 C-13,-32 -7,-37 0,-39 C7,-37 13,-32 14,-25 C16,-15 10,-4 0,0 Z" transform="translate(100,100) rotate(150) scale(1.35)" fill="url(#gradSepal)"/>
+            <path d="M0,0 C-10,-4 -16,-15 -14,-25 C-13,-32 -7,-37 0,-39 C7,-37 13,-32 14,-25 C16,-15 10,-4 0,0 Z" transform="translate(100,100) rotate(30) scale(1.35)" fill="url(#gradSepal)"/>
+          </g>
 
-            <!-- ground line (drawn left-to-right from stem base) -->
-            <path id="groundPath" d="M20 250 C60 246 140 246 180 250" stroke="#4a2f2a" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <g class="ring ring-outer" filter="url(#petalShadow)">
+            <path class="petal-path" d="M0,0 C-24,-8 -36,-28 -33,-46 C-31,-60 -20,-69 -9,-72 C-6,-73 -4,-70 0,-62 C4,-70 6,-73 9,-72 C20,-69 31,-60 33,-46 C36,-28 24,-8 0,0 Z" transform="translate(100,100) rotate(-38)" fill="url(#gradOuter)"/>
+            <path class="petal-path" d="M0,0 C-24,-8 -36,-28 -33,-46 C-31,-60 -20,-69 -9,-72 C-6,-73 -4,-70 0,-62 C4,-70 6,-73 9,-72 C20,-69 31,-60 33,-46 C36,-28 24,-8 0,0 Z" transform="translate(100,100) rotate(22)" fill="url(#gradOuter)"/>
+            <path class="petal-path" d="M0,0 C-24,-8 -36,-28 -33,-46 C-31,-60 -20,-69 -9,-72 C-6,-73 -4,-70 0,-62 C4,-70 6,-73 9,-72 C20,-69 31,-60 33,-46 C36,-28 24,-8 0,0 Z" transform="translate(100,100) rotate(82)" fill="url(#gradOuter)"/>
+            <path class="petal-path" d="M0,0 C-24,-8 -36,-28 -33,-46 C-31,-60 -20,-69 -9,-72 C-6,-73 -4,-70 0,-62 C4,-70 6,-73 9,-72 C20,-69 31,-60 33,-46 C36,-28 24,-8 0,0 Z" transform="translate(100,100) rotate(142)" fill="url(#gradOuter)"/>
+            <path class="petal-path" d="M0,0 C-24,-8 -36,-28 -33,-46 C-31,-60 -20,-69 -9,-72 C-6,-73 -4,-70 0,-62 C4,-70 6,-73 9,-72 C20,-69 31,-60 33,-46 C36,-28 24,-8 0,0 Z" transform="translate(100,100) rotate(202)" fill="url(#gradOuter)"/>
+            <path class="petal-path" d="M0,0 C-24,-8 -36,-28 -33,-46 C-31,-60 -20,-69 -9,-72 C-6,-73 -4,-70 0,-62 C4,-70 6,-73 9,-72 C20,-69 31,-60 33,-46 C36,-28 24,-8 0,0 Z" transform="translate(100,100) rotate(262)" fill="url(#gradOuter)"/>
+          </g>
 
-            <!-- bloom outline (single contour) -->
-            <path id="bloomOutline" d="M100 118 C88 92 68 86 56 102 C48 114 52 136 72 146 C86 154 100 152 112 146 C136 134 156 112 148 100 C136 80 116 84 100 118 Z" stroke="#c92b39" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <g class="ring ring-mid" filter="url(#petalShadow)">
+            <path class="petal-path" d="M0,0 C-24,-8 -36,-28 -33,-46 C-31,-60 -20,-69 -9,-72 C-6,-73 -4,-70 0,-62 C4,-70 6,-73 9,-72 C20,-69 31,-60 33,-46 C36,-28 24,-8 0,0 Z" transform="translate(100,100) rotate(0) scale(0.72)" fill="url(#gradMid)"/>
+            <path class="petal-path" d="M0,0 C-24,-8 -36,-28 -33,-46 C-31,-60 -20,-69 -9,-72 C-6,-73 -4,-70 0,-62 C4,-70 6,-73 9,-72 C20,-69 31,-60 33,-46 C36,-28 24,-8 0,0 Z" transform="translate(100,100) rotate(72) scale(0.72)" fill="url(#gradMid)"/>
+            <path class="petal-path" d="M0,0 C-24,-8 -36,-28 -33,-46 C-31,-60 -20,-69 -9,-72 C-6,-73 -4,-70 0,-62 C4,-70 6,-73 9,-72 C20,-69 31,-60 33,-46 C36,-28 24,-8 0,0 Z" transform="translate(100,100) rotate(144) scale(0.72)" fill="url(#gradMid)"/>
+            <path class="petal-path" d="M0,0 C-24,-8 -36,-28 -33,-46 C-31,-60 -20,-69 -9,-72 C-6,-73 -4,-70 0,-62 C4,-70 6,-73 9,-72 C20,-69 31,-60 33,-46 C36,-28 24,-8 0,0 Z" transform="translate(100,100) rotate(216) scale(0.72)" fill="url(#gradMid)"/>
+            <path class="petal-path" d="M0,0 C-24,-8 -36,-28 -33,-46 C-31,-60 -20,-69 -9,-72 C-6,-73 -4,-70 0,-62 C4,-70 6,-73 9,-72 C20,-69 31,-60 33,-46 C36,-28 24,-8 0,0 Z" transform="translate(100,100) rotate(288) scale(0.72)" fill="url(#gradMid)"/>
+          </g>
 
-            <!-- bloom fill (same shape) -->
-            <path id="bloomFill" d="M100 118 C88 92 68 86 56 102 C48 114 52 136 72 146 C86 154 100 152 112 146 C136 134 156 112 148 100 C136 80 116 84 100 118 Z" fill="#c92b39" opacity="0"/>
+          <g class="ring ring-inner" filter="url(#petalShadow)">
+            <path class="petal-path" d="M0,0 C-24,-8 -36,-28 -33,-46 C-31,-60 -20,-69 -9,-72 C-6,-73 -4,-70 0,-62 C4,-70 6,-73 9,-72 C20,-69 31,-60 33,-46 C36,-28 24,-8 0,0 Z" transform="translate(100,100) rotate(15) scale(0.46)" fill="url(#gradInner)"/>
+            <path class="petal-path" d="M0,0 C-24,-8 -36,-28 -33,-46 C-31,-60 -20,-69 -9,-72 C-6,-73 -4,-70 0,-62 C4,-70 6,-73 9,-72 C20,-69 31,-60 33,-46 C36,-28 24,-8 0,0 Z" transform="translate(100,100) rotate(105) scale(0.46)" fill="url(#gradInner)"/>
+            <path class="petal-path" d="M0,0 C-24,-8 -36,-28 -33,-46 C-31,-60 -20,-69 -9,-72 C-6,-73 -4,-70 0,-62 C4,-70 6,-73 9,-72 C20,-69 31,-60 33,-46 C36,-28 24,-8 0,0 Z" transform="translate(100,100) rotate(195) scale(0.46)" fill="url(#gradInner)"/>
+            <path class="petal-path" d="M0,0 C-24,-8 -36,-28 -33,-46 C-31,-60 -20,-69 -9,-72 C-6,-73 -4,-70 0,-62 C4,-70 6,-73 9,-72 C20,-69 31,-60 33,-46 C36,-28 24,-8 0,0 Z" transform="translate(100,100) rotate(285) scale(0.46)" fill="url(#gradInner)"/>
+          </g>
+
+          <g class="ring ring-bud" filter="url(#petalShadow)">
+            <path class="petal-path" d="M0,0 C-24,-8 -36,-28 -33,-46 C-31,-60 -20,-69 -9,-72 C-6,-73 -4,-70 0,-62 C4,-70 6,-73 9,-72 C20,-69 31,-60 33,-46 C36,-28 24,-8 0,0 Z" transform="translate(100,100) rotate(40) scale(0.24)" fill="url(#gradBud)"/>
+            <path class="petal-path" d="M0,0 C-24,-8 -36,-28 -33,-46 C-31,-60 -20,-69 -9,-72 C-6,-73 -4,-70 0,-62 C4,-70 6,-73 9,-72 C20,-69 31,-60 33,-46 C36,-28 24,-8 0,0 Z" transform="translate(100,100) rotate(160) scale(0.24)" fill="url(#gradBud)"/>
+            <path class="petal-path" d="M0,0 C-24,-8 -36,-28 -33,-46 C-31,-60 -20,-69 -9,-72 C-6,-73 -4,-70 0,-62 C4,-70 6,-73 9,-72 C20,-69 31,-60 33,-46 C36,-28 24,-8 0,0 Z" transform="translate(100,100) rotate(280) scale(0.24)" fill="url(#gradBud)"/>
+            <circle cx="100" cy="100" r="7" fill="url(#gradBud)"/>
           </g>
         </svg>
       </div>
-
-      <!-- end SVG component -->
-
     </div>
 
     <p class="final-message" id="finalMessage">Til death do us part</p>
-    <!-- falling petals removed; kept elements hidden by enhancements CSS -->
+    <div class="falling-petal falling-petal--1"></div>
+    <div class="falling-petal falling-petal--2"></div>
+    <div class="falling-petal falling-petal--3"></div>
     <div class="scene-fade" id="sceneFade"></div>
   </section>
 
   <!-- مشهد الرفض / الكيان الغامض -->
   <section id="screen-fail" class="screen fail-scene">
+    <div class="fail-light-drain" id="failLightDrain"></div>
     <p class="fail-message" id="failMessage">لقد اعتقدت أنك تكن للأناناس أكثر من هذا.</p>
 
     <div class="fail-void">
@@ -163,6 +212,6 @@
   <audio id="sadAudio" src="sad.mp3" preload="auto"></audio>
 
   <script src="script.js"></script>
-  <script src="assets/rose-component.js"></script>
 </body>
-</html>
+  </html>
+  

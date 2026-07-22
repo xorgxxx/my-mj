@@ -710,4 +710,385 @@ html,body{
   100%{ opacity:0; transform:translate(-38px,52vh) rotate(140deg); }
 }
 @keyframes petalFall2{
-  0%{ opacity:0; trans
+  0%{ opacity:0; transform:translate(0,0) rotate(0deg); }
+  10%{ opacity:0.85; }
+  100%{ opacity:0; transform:translate(28px,55vh) rotate(-120deg); }
+}
+@keyframes petalFall3{
+  0%{ opacity:0; transform:translate(0,0) rotate(0deg); }
+  10%{ opacity:0.8; }
+  100%{ opacity:0; transform:translate(-10px,48vh) rotate(90deg); }
+}
+
+/* كل طبقة بتلات تتفتح ككتلة رسم واحدة متصلة - فتح تدريجي حقيقي وليس تجميع أجزاء */
+@keyframes ringBloom{
+  0%{ opacity:0; transform:scale(0.06) rotate(-10deg); }
+  30%{ opacity:0.7; transform:scale(0.42) rotate(-4deg); }
+  60%{ opacity:1; transform:scale(0.8) rotate(-1deg); }
+  85%{ transform:scale(1.04) rotate(0.5deg); }
+  100%{ opacity:1; transform:scale(1) rotate(0deg); }
+}
+
+/* ذبول الوردة: كل طبقة تنطوي للداخل وتغمق ألوانها ببطء شديد */
+@keyframes ringWilt{
+  0%{ opacity:1; filter:brightness(1) saturate(1); transform:scale(1) rotate(0deg); }
+  45%{ opacity:0.9; filter:brightness(0.72) saturate(0.82); transform:scale(0.92) rotate(5deg); }
+  100%{ opacity:0.32; filter:brightness(0.32) saturate(0.5); transform:scale(0.78) rotate(12deg); }
+}
+
+/* الساق تنحني ببطء تحت ثقل الوردة الذابلة */
+@keyframes stemWilt{
+  0%{ transform:rotate(0deg); }
+  100%{ transform:rotate(22deg); }
+}
+
+/* الأوراق تذبل وتغمق مع الساق */
+@keyframes leafWilt{
+  0%{ opacity:1; filter:brightness(1); }
+  100%{ opacity:0.45; filter:brightness(0.4); transform:scale(0.82) rotate(-22deg); }
+}
+
+/* رأس الوردة كله يسقط ببطء شديد، شويًا شويًا */
+@keyframes roseFall{
+  0%{ opacity:1; transform:scale(1) translateY(-36vh) rotate(0deg); }
+  50%{ opacity:1; transform:scale(0.96) translateY(-31vh) rotate(16deg); }
+  100%{ opacity:0.9; transform:scale(0.88) translateY(-21vh) rotate(30deg); }
+}
+@keyframes glowFall{
+  0%{ opacity:0.4; transform:scale(1) translateY(-36vh); }
+  100%{ opacity:0.1; transform:scale(0.8) translateY(-21vh); }
+}
+
+/* اكتمال الإظلام مع ذبول الوردة، ليغرق المشهد كله في العتمة */
+@keyframes ambientGlowDeepen{
+  0%{ opacity:1; }
+  100%{ opacity:0.25; }
+}
+@keyframes groundGlowDeepen{
+  0%{ opacity:0.85; }
+  100%{ opacity:0.15; }
+}
+
+/* إظلام كامل وبطيء جداً للمشهد بأكمله، كخاتمة موجعة */
+@keyframes sceneFadeIn{
+  0%{ opacity:0; }
+  100%{ opacity:1; }
+}
+@keyframes ambientGlowUp{
+  0%{ opacity:0; }
+  100%{ opacity:1; background:radial-gradient(circle at 50% 62%, rgba(255,45,67,0.35) 0%, transparent 60%); }
+}
+@keyframes groundGlowUp{
+  0%{ opacity:0; }
+  100%{ opacity:0.85; }
+}
+@keyframes fadeUpBlur{
+  0%{ opacity:0; filter:blur(10px); transform:translateY(16px); }
+  100%{ opacity:1; filter:blur(0px); transform:translateY(0); }
+}
+
+/* ---------- التنويه ---------- */
+
+.notice-overlay{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:rgba(5,2,2,0.7);
+  backdrop-filter:blur(6px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .5s ease;
+}
+.notice-overlay.active{
+  opacity:1;
+  pointer-events:auto;
+}
+.notice-overlay.notice-hidden{
+  display:none;
+}
+.notice-card{
+  width:min(420px, 90vw);
+  background:linear-gradient(160deg, rgba(74,7,16,0.92), rgba(15,4,5,0.94));
+  border:1px solid rgba(255,90,107,0.25);
+  border-radius:22px;
+  padding:32px 26px;
+  text-align:center;
+  box-shadow:0 24px 60px rgba(0,0,0,0.6), 0 0 40px rgba(255,45,67,0.12);
+  transform:translateY(14px) scale(0.96);
+  opacity:0;
+  transition:transform .5s cubic-bezier(.22,.61,.36,1), opacity .5s ease;
+}
+.notice-overlay.active .notice-card{
+  transform:translateY(0) scale(1);
+  opacity:1;
+}
+.notice-title{
+  margin:0 0 14px;
+  font-size:22px;
+  font-weight:900;
+  color:#fff;
+  letter-spacing:0.5px;
+  text-shadow:0 0 16px rgba(255,45,67,0.5);
+}
+.notice-text{
+  margin:0 0 26px;
+  font-size:15.5px;
+  line-height:1.9;
+  color:var(--q-text-dim);
+}
+.notice-btn{
+  padding:12px 40px;
+  font-family:inherit;
+  font-size:16px;
+  font-weight:700;
+  color:#fff;
+  background:linear-gradient(135deg, var(--q-red), var(--q-red-deep));
+  border:none;
+  border-radius:50px;
+  cursor:pointer;
+  box-shadow:0 10px 22px rgba(255,45,67,0.3);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.notice-btn:hover{
+  transform:translateY(-2px) scale(1.03);
+  box-shadow:0 14px 28px rgba(255,45,67,0.4);
+}
+
+/* ---------- مشهد الرفض: الكيان الغامض ---------- */
+
+.fail-scene{
+  background:#000;
+  overflow:hidden;
+}
+
+/* الضوء يُسحب وينكمش إلى العتمة فور دخول المشهد - كأن النور يُنتزع لا يخفت فقط */
+.fail-light-drain{
+  position:absolute;
+  inset:0;
+  z-index:9;
+  pointer-events:none;
+  background:radial-gradient(circle at 50% 42%, rgba(255,244,235,0.98) 0%, rgba(255,210,190,0.55) 30%, rgba(20,6,14,0.2) 60%, transparent 78%);
+  opacity:0;
+}
+.fail-scene.active .fail-light-drain{
+  animation:lightDrain 2.6s cubic-bezier(.6,0,.85,1) forwards;
+}
+@keyframes lightDrain{
+  0%{ opacity:1; transform:scale(2.6); }
+  55%{ opacity:1; transform:scale(1.1); }
+  100%{ opacity:0; transform:scale(0.05); }
+}
+
+.fail-message{
+  position:relative;
+  font-family:'Aref Ruqaa', 'Cairo', serif;
+  color:#f3e6df;
+  font-size:clamp(21px,4.2vw,32px);
+  font-weight:700;
+  font-style:italic;
+  line-height:2;
+  max-width:560px;
+  margin:0 0 6vh;
+  opacity:0;
+  z-index:6;
+  text-shadow:0 0 20px rgba(200,150,180,0.25), 0 2px 10px rgba(0,0,0,0.6);
+  animation:fadeInMessage 2s ease forwards 1.6s;
+}
+@keyframes fadeIn{
+  from{ opacity:0; }
+  to{ opacity:1; }
+}
+@keyframes fadeInMessage{
+  from{ opacity:0; transform:translateY(10px); filter:blur(6px); }
+  to{ opacity:1; transform:translateY(0); filter:blur(0); }
+}
+
+.fail-void{
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse at 50% 55%, rgba(58,20,48,0.32) 0%, #000 75%);
+}
+
+/* غبار عائم خفيف */
+.fail-dust{
+  position:absolute;
+  width:3px;
+  height:3px;
+  border-radius:50%;
+  background:rgba(240,170,190,0.55);
+  filter:blur(1px);
+  opacity:0;
+  animation:dustFloat 11s ease-in-out infinite;
+}
+.fail-dust--1{ top:30%; left:22%; animation-delay:.5s; }
+.fail-dust--2{ top:55%; left:70%; animation-delay:2.2s; }
+.fail-dust--3{ top:70%; left:35%; animation-delay:4s; }
+.fail-dust--4{ top:40%; left:60%; animation-delay:6s; }
+@keyframes dustFloat{
+  0%{ opacity:0; transform:translateY(0); }
+  15%{ opacity:0.5; }
+  85%{ opacity:0.2; }
+  100%{ opacity:0; transform:translateY(-60px); }
+}
+
+/* ضباب ناعم يتحرك ببطء */
+.fail-fog{
+  position:absolute;
+  inset:-10%;
+  background:
+    radial-gradient(ellipse at 30% 60%, rgba(48,16,42,0.24), transparent 55%),
+    radial-gradient(ellipse at 70% 45%, rgba(30,12,30,0.2), transparent 50%);
+  filter:blur(30px);
+  opacity:0;
+  animation:fogDrift 12s ease-in-out infinite, fogFadeIn 3.5s ease forwards 1.4s;
+}
+@keyframes fogDrift{
+  0%,100%{ transform:translateX(0) translateY(0); }
+  50%{ transform:translateX(-3%) translateY(2%); }
+}
+@keyframes fogFadeIn{
+  from{ opacity:0; }
+  to{ opacity:1; }
+}
+
+/* قلب يظهر ثم ينبض ببطء كنبض حزين، وبعدها يتصدع شويًا شويًا حتى ينكسر إلى نصفين، وضوء دافئ حزين يتسرب من الشرخ */
+.fail-heart{
+  position:absolute;
+  top:19%;
+  left:50%;
+  width:130px;
+  margin-left:-65px;
+  z-index:4;
+  opacity:0;
+  filter:drop-shadow(0 0 22px rgba(230,150,170,0.35));
+  animation:
+    heartFadeIn 2s ease forwards 1.8s,
+    heartbeat 2.2s ease-in-out 2 3.2s;
+}
+.fail-heart-svg{ width:100%; height:auto; overflow:visible; display:block; }
+@keyframes heartFadeIn{
+  from{ opacity:0; transform:scale(0.8); }
+  to{ opacity:1; transform:scale(1); }
+}
+@keyframes heartbeat{
+  0%,100%{ transform:scale(1); }
+  15%{ transform:scale(1.06); }
+  30%{ transform:scale(1); }
+  45%{ transform:scale(1.04); }
+  60%{ transform:scale(1); }
+}
+
+.fail-heart-crack{
+  stroke-dasharray:100;
+  stroke-dashoffset:100;
+  filter:drop-shadow(0 0 3px rgba(255,220,200,0.9)) drop-shadow(0 0 8px rgba(255,180,160,0.6));
+  animation:crackDraw 4.5s ease-in forwards 5.6s;
+}
+@keyframes crackDraw{
+  to{ stroke-dashoffset:0; }
+}
+
+.fail-heart-left{
+  transform-origin:50% 100%;
+  animation:heartBreakLeft 3.4s ease-in forwards 9.6s;
+}
+.fail-heart-right{
+  transform-origin:50% 100%;
+  animation:heartBreakRight 3.4s ease-in forwards 9.6s;
+}
+@keyframes heartBreakLeft{
+  0%{ transform:translate(0,0) rotate(0deg); opacity:1; }
+  100%{ transform:translate(-13px,24px) rotate(-12deg); opacity:0.3; }
+}
+@keyframes heartBreakRight{
+  0%{ transform:translate(0,0) rotate(0deg); opacity:1; }
+  100%{ transform:translate(13px,27px) rotate(13deg); opacity:0.3; }
+}
+
+/* الكيان الغامض: كتلة دخان وظلال بلا ملامح، تقترب ببطء من الأفق البعيد */
+.fail-entity{
+  position:absolute;
+  bottom:8vh;
+  left:50%;
+  width:120px;
+  height:160px;
+  margin-left:-60px;
+  opacity:0;
+  transform:translateY(0) scale(0.5);
+  z-index:3;
+  animation:
+    entityApproach 11s cubic-bezier(.3,.05,.35,1) forwards 2.0s;
+}
+.fail-entity-core{
+  position:absolute;
+  inset:0;
+  border-radius:50% 50% 45% 45% / 60% 60% 40% 40%;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(70,25,60,0.45), transparent 60%),
+    radial-gradient(ellipse at 50% 80%, rgba(0,0,0,0.9), rgba(20,8,18,0.55) 70%, transparent 100%);
+  filter:blur(11px);
+}
+.fail-entity-wisp{
+  position:absolute;
+  bottom:0;
+  width:36px;
+  height:90%;
+  border-radius:50% 50% 60% 60% / 70% 70% 30% 30%;
+  background:radial-gradient(ellipse at 50% 40%, rgba(35,14,32,0.65), transparent 75%);
+  filter:blur(9px);
+  animation:wispSway 6s ease-in-out infinite;
+}
+.fail-entity-wisp--1{ left:6px; animation-delay:0s; }
+.fail-entity-wisp--2{ left:44px; animation-delay:1.6s; }
+.fail-entity-wisp--3{ left:78px; animation-delay:3.1s; }
+@keyframes wispSway{
+  0%,100%{ transform:translateX(0) skewX(0deg); }
+  50%{ transform:translateX(4px) skewX(3deg); }
+}
+@keyframes entityApproach{
+  0%{ opacity:0; transform:translateY(10px) scale(0.4); filter:blur(4px); }
+  15%{ opacity:0.4; filter:blur(1px); }
+  70%{ opacity:0.65; transform:translateY(-4px) scale(1.05); filter:blur(0.5px); }
+  100%{ opacity:0.75; transform:translateY(-8px) scale(1.3); filter:blur(0.5px); }
+}
+
+/* الإظلام التدريجي الكامل للشاشة مع اقتراب الكيان */
+.fail-blackout{
+  position:absolute;
+  inset:0;
+  background:#000;
+  opacity:0;
+  z-index:8;
+  pointer-events:none;
+  animation:blackoutFade 5s ease-in forwards 9.9s;
+}
+@keyframes blackoutFade{
+  from{ opacity:0; }
+  to{ opacity:1; }
+}
+
+/* الرسالة نفسها تخفت مع الظلام قبل نهاية المشهد */
+.fail-scene.active .fail-message{
+  animation:
+    fadeInMessage 2s ease forwards 1.6s,
+    fadeOutMessage 2.2s ease forwards 8.9s;
+}
+@keyframes fadeOutMessage{
+  to{ opacity:0; filter:blur(4px); }
+}
+
+/* ---------- التجاوب ---------- */
+
+@media (max-width:480px){
+  .slider-card{ padding:24px 18px 18px; }
+  .final-message{ font-size:24px; padding:10px 18px; }
+  .btn-row{ flex-direction:column; width:100%; }
+  .btn-row button{ width:100%; }
+  .notice-card{ padding:26px 20px; }
+  .fail-message{ padding:0 10px; }
+  .fail-entity{ width:90px; height:130px; margin-left:-45px; }
+}
